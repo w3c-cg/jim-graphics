@@ -1429,6 +1429,149 @@ Each item should be a quoted non-empty string separated by a comma.
 }  
 </xmp>
 
+### Provenance chain ### {#provenance_chain}
+
+The `chain` key defines an ordered array expressing the provenance chain of the document: the sequence of parties who authored, published, or adapted the work over time. It preserves credit to the original author or publisher as content is adapted and shared.
+
+Each item in the `chain` array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative; the optional `date` key is descriptive and is not used to order the chain.
+
+Each item must include at least one of the `name` or `organization` keys. All other keys are optional.
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`role`</td>
+      <td>token</td>
+      <td>The party's relationship to this authored state, such as `author`, `publisher`, or `adapter`</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`name`</td>
+      <td>non-empty string</td>
+      <td>The name of the person credited for this state</td>
+      <td>required if `organization` is absent</td>
+    </tr>
+    <tr>
+      <td>`organization`</td>
+      <td>non-empty string</td>
+      <td>The name of the organization credited for this state</td>
+      <td>required if `name` is absent</td>
+    </tr>
+    <tr>
+      <td>`title`</td>
+      <td>non-empty string</td>
+      <td>The title of the work at this authored state</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`href`</td>
+      <td>string</td>
+      <td>A URI locating the source document or work for this authored state</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`date`</td>
+      <td>date-time string</td>
+      <td>The date and time this state was created or modified, as an [[!RFC3339]] `date-time`</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`software`</td>
+      <td>object</td>
+      <td>The tool that produced this authored state, if any</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+#### The `role` key #### {#provenance_role}
+
+The `role` key denotes the relationship of the party to the authored state it describes. When `role` is absent, the item's role is `author` if it is the first item in the `chain`, and `adapter` otherwise. An item should set `role` explicitly when this default does not apply — for example, when the origin of the work is a `publisher`, when a party is an `editor`, or when the origin has multiple co-authors.
+
+The value should be one of the following tokens:
+
+* `author`: the original creator of the work.
+* `publisher`: a party that published or distributed the work.
+* `adapter`: a party that adapted, remixed, or modified the work for a particular need.
+* `editor`: a party that revised the work without altering its essential content.
+* `contributor`: any other contributing party.
+
+Implementations may define additional `role` tokens for cases not covered by this list. Consumers that do not recognize a `role` token should treat the entry as a `contributor`.
+
+#### The `software` key #### {#provenance_software}
+
+The `software` key denotes an object identifying the tool that produced the authored state, such as a chart generator, an authoring application, or an automated service. The `software` object records the instrument used; the crediting party remains the `name` or `organization` of the containing item.
+
+The term `software` is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see [[#conform_imp]]).
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`name`</td>
+      <td>non-empty string</td>
+      <td>The name of the tool</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`version`</td>
+      <td>non-empty string</td>
+      <td>The version of the tool that produced this state</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`organization`</td>
+      <td>non-empty string</td>
+      <td>The vendor or organization that produces the tool</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+<xmp highlight='json'>
+{
+  "provenance": {
+    "chain": [
+      {
+        "name": "Jamie Rivera",
+        "date": "2026-08-24T14:30:00Z",
+        "software": {
+          "name": "ParaCharts",
+          "version": "2.3.1",
+          "organization": "Fizz Studio"
+        }
+      },
+      {
+        "role": "adapter",
+        "name": "Alex Chen",
+        "title": "Quarterly Sales (tactile edition)",
+        "href": "https://example.org/works/q-sales-tactile.svg",
+        "date": "2026-08-25T09:00:00Z"
+      }
+    ]
+  }
+}
+</xmp>
+
+Note: In the example above, the first item omits `role` and defaults to `author`; the second sets `role` to `adapter` explicitly. Set `role` to record other relationships, such as `"role": "publisher"`.
+
+Note: Identifiers meaningful only within a single platform, such as internal database keys, should be carried in the `extensions` block rather than in `chain`, so the provenance chain remains portable between implementations.
+
 ## Tags ## {#tags}
 
 Tags are a way to categorize the file, either by the content, by the capabilities, or by a rating system, or some combination thereof.
