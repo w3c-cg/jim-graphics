@@ -1488,10 +1488,10 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version be42ac8f6, updated Mon Dec 22 21:45:05 2025 +0000" name="generator">
-  <link href="https://Inclusio-Community.github.io/json-image-metadata/" rel="canonical">
+  <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
+  <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
   <link href="./favicon.svg" rel="icon">
-  <meta content="63747b734fa22d9c42f1d83e353513cc3e6fa42a" name="revision">
+  <meta content="d307e637f9cc0176d5c63ec27e5b39eb396d7bb1" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -1786,7 +1786,7 @@ pre .property::before, pre .property::after {
 </style>
 <style>/* Boilerplate: style-counters */
 body {
-    counter-reset: example figure issue;
+    counter-reset: example figure issue table;
 }
 .issue {
     counter-increment: issue;
@@ -1811,6 +1811,13 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
 }
 </style>
 <style>/* Boilerplate: style-issues */
@@ -2011,31 +2018,57 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
     c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
 }
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
 </style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="no-ref p-name" id="title">JSON Image Metadata</h1>
-   <h2 class="heading no-num no-ref no-toc settled" id="profile-and-date"><span class="content">Editor’s Draft,
-    <time class="dt-updated" datetime="2026-02-04">4 February 2026</time></span></h2>
+   <h2 class="heading no-num no-ref no-toc settled" id="profile-and-date"><span class="content">Living Document,
+    <time class="dt-updated" datetime="2026-10-22">22 October 2026</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="https://Inclusio-Community.github.io/json-image-metadata/">https://Inclusio-Community.github.io/json-image-metadata/</a>
+     <dd><a class="u-url" href="https://w3c-cg.github.io/jim-graphics/">https://w3c-cg.github.io/jim-graphics/</a>
      <dt>Issue Tracking:
-     <dd><a href="https://github.com/Inclusio-Community/json-image-metadata/issues/">GitHub</a>
+     <dd><a href="https://github.com/w3c-cg/jim-graphics/issues/">GitHub</a>
      <dt class="editor">Editors:
-     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:doug@fizz.studio">Doug Schepers</a> (<a class="org p-org" href="http://fizz.studio">Fizz Studio</a>)
-     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:simon@fizz.studio">Simon Varey</a> (<a class="org p-org" href="http://fizz.studio">Fizz Studio</a>)
+     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:doug@fizz.studio">Doug Schepers</a> (<a class="org p-org" href="https://fizz.studio">Fizz Studio</a>)
+     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:simon@fizz.studio">Simon Varey</a> (<a class="org p-org" href="https://fizz.studio">Fizz Studio</a>)
+     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:dan.gardner@viewplus.com">Dan Gardner</a> (<a class="org p-org" href="https://www.viewplus.com">ViewPlus Technologies</a>)
+     <dd class="editor h-card p-author vcard"><a class="email fn p-name u-email" href="mailto:jeff.croxell@vital.education">Jeff Croxell</a> (<a class="org p-org" href="https://vital.education">ViTAL Education</a>)
      <dt>Semantic Version:
-     <dd>1.1.0
+     <dd>2.0.0
     </dl>
    </div>
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" height="15" src="https://licensebuttons.net/p/zero/1.0/80x15.png" width="80"></a>
 To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 4 February 2026,
+In addition, as of 22 October 2026,
 the editors have made this specification available under the
 <a href="https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0.
@@ -2143,19 +2176,19 @@ Parts of this work may be from another specification document.  If so, those par
         <li><a href="#href_data_block"><span class="secno">4.1.10</span> <span class="content">The <code>href</code> key in a <code>datasets</code> block</span></a>
        </ol>
       <li>
-       <a href="#selectors"><span class="secno">4.2</span> <span class="content">Selectors</span></a>
+       <a href="#bindings"><span class="secno">4.2</span> <span class="content">Bindings</span></a>
        <ol class="toc">
         <li>
-         <a href="#selectors_block"><span class="secno">4.2.1</span> <span class="content">The <code>selectors</code> block data</span></a>
+         <a href="#bindings_block"><span class="secno">4.2.1</span> <span class="content">The <code>bindings</code> block</span></a>
          <ol class="toc">
-          <li><a href="#selectorstring_data_block"><span class="secno">4.2.1.1</span> <span class="content">The <code>[selector-string]</code> key</span></a>
-          <li><a href="#selectorstring_target_selector"><span class="secno">4.2.1.2</span> <span class="content"><code>[selector-string]</code> as target selector</span></a>
+          <li><a href="#bindingname_data_block"><span class="secno">4.2.1.1</span> <span class="content">The <code>[binding-name]</code> key</span></a>
+          <li><a href="#binding_target"><span class="secno">4.2.1.2</span> <span class="content">Bindings as targets</span></a>
          </ol>
         <li>
          <a href="#inline_data"><span class="secno">4.2.2</span> <span class="content">Inline data</span></a>
          <ol class="toc">
           <li>
-           <a href="#linking_data"><span class="secno">4.2.2.1</span> <span class="content">Linking data and representational elements</span></a>
+           <a href="#tying_data"><span class="secno">4.2.2.1</span> <span class="content">Tying data and representational elements</span></a>
            <ol class="toc">
             <li><a href="#data_model_cardinality"><span class="secno">4.2.2.1.1</span> <span class="content">Data model cardinality</span></a>
            </ol>
@@ -2201,7 +2234,7 @@ Parts of this work may be from another specification document.  If so, those par
        <a href="#target_selector_key"><span class="secno">5.1</span> <span class="content">Target <code>selector</code> key</span></a>
        <ol class="toc">
         <li><a href="#target_element_selector"><span class="secno">5.1.1</span> <span class="content">Target <code>selector</code> for elements</span></a>
-        <li><a href="#target_selector_set_selector"><span class="secno">5.1.2</span> <span class="content">Target <code>selector</code> for selector sets</span></a>
+        <li><a href="#target_binding_selector"><span class="secno">5.1.2</span> <span class="content">Target <code>selector</code> for bindings</span></a>
         <li>
          <a href="#target_shapes"><span class="secno">5.1.3</span> <span class="content">Target shapes</span></a>
          <ol class="toc">
@@ -2311,14 +2344,14 @@ Parts of this work may be from another specification document.  If so, those par
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
-      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Non-Normative References</span></a>
      </ol>
    </ol>
   </nav>
   <main>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
    <p>This specification defines a structured metadata schema for image documents to express information, data, and behaviors related to the visual image, with a particular emphasis on accessibility. The metadata includes raw data, provenance information, and predefined behaviors for assistive technology techniques, such as haptics, sonification, tactiles, high contrast, voicing, braille, and more.</p>
-   <p>The metadata is aimed primarily at data visualizations such as charts, graphs, diagrams and other information graphics, but can also be used for related purposes in any image.</p>
+   <p>The metadata is aimed primarily at data visualizations such as charts, graphs, diagrams, maps and other information graphics, but can also be used for related purposes in any image.</p>
    <p>It is intended for use with a structured graphics markup such as Scalable Vector Graphics (SVG), but could be embedded in and applied to any image format, including raster images and 3D objects and scenes.</p>
    <h3 class="heading settled" data-level="1.1" id="motivation"><span class="secno">1.1. </span><span class="content">Motivation</span><a class="self-link" href="#motivation"></a></h3>
    <p>This specification was written to help unify and standardize accessible graphics, and to enable systemic experimentation with assistive technology techniques. By defining the way techniques such as haptics, sonification, and tactiles are expressed in a declarative way, the parameters can be explored and tested with users to ensure ease of consistent authoring and interoperable behavior across different assistive technology readers and devices.</p>
@@ -2337,10 +2370,10 @@ Parts of this work may be from another specification document.  If so, those par
    <p>A document conforming to this specification should specify the version number of the specification to which it conforms, in the <code>jim</code> key of the <code>version</code> block.</p>
    <p>An implementation conforming to this specification must store internally the version number of the specification to which it conforms, and should expose the version number to the end user. If the implementation opens a JIM document which specifies an incompatible version of JIM, the implementation must warn the end user.</p>
    <div class="note" role="note">
-Note that this specification is being developed in parallel with several experimental implementations, on a milestone basis, as part of the Inclusio Project. The minor version number (MAJOR.MINOR.PATCH) corresponds to the project milestone number across the Inclusio Project implementations.
+Note that versions of this specification prior to 2.0.0 were developed by the Inclusio Project, in parallel with several experimental implementations. Version 2.0.0 is the first version developed by the W3C JIM Structured Graphics Community Group. Version numbering continues from the Inclusio versions, so that version values in existing JIM documents remain comparable.
 </div>
    <div class="note" role="note">
-Note that version 0.3.0 of this specification is the first version to use Semantic Versioning. Future versions of this specification adhere to the practice of incrementing the major version number for breaking changes.
+Note that version 0.3.0 of this specification is the first version to use Semantic Versioning. This specification increments the major version number for breaking changes.
 </div>
    <h3 class="heading settled" data-level="2.3" id="conform_doc"><span class="secno">2.3. </span><span class="content">Conforming document</span><a class="self-link" href="#conform_doc"></a></h3>
    <p>A document conforming to this specification must contain a metadata block that matches the schema defined in this specification, and must have at least one non-empty <code>datasets</code> block or one non-empty <code>behaviors</code> block.</p>
@@ -2353,7 +2386,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
    <h3 class="heading settled" data-level="2.4" id="conform_imp"><span class="secno">2.4. </span><span class="content">Conforming implementation</span><a class="self-link" href="#conform_imp"></a></h3>
    <p>An implementation conforming to this specification must access the contents of the metadata block. For an SVG-capable implementation displaying an SVG document, a conforming implementation must read the JSON data in the indicated <code>metadata</code> element.</p>
    <p>A conforming implementation must provide a means for the end user to extract the contents of the <code>datasets</code> block.</p>
-   <p>A conforming implementation must resolve all selectors and execute all supported features of the <code>behaviors</code> block.</p>
+   <p>A conforming implementation must resolve all bindings and target selectors and execute all supported features of the <code>behaviors</code> block.</p>
    <h4 class="heading settled" data-level="2.4.1" id="conform_imp_classes"><span class="secno">2.4.1. </span><span class="content">Classes of Conforming implementation</span><a class="self-link" href="#conform_imp_classes"></a></h4>
    <p>This specification defines multiple classes of conforming implementations. A conforming implementation must satisfy the requirements of at least one defined class. An implementation may claim conformance to multiple classes if it meets the requirements of each.</p>
    <p>This specification defines requirements for conforming implementations that generate, consume, or process JSON Image Metadata (JIM). A conforming implementation must satisfy the requirements of at least one conformance class defined in this section. An implementation may claim conformance to multiple classes if it meets the requirements of each.</p>
@@ -2363,7 +2396,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
    </blockquote>
    <h2 class="heading settled" data-level="3" id="jim_structure_forms"><span class="secno">3. </span><span class="content">JIM metadata structure and forms</span><a class="self-link" href="#jim_structure_forms"></a></h2>
    <p>A JIM document may be represented either as a "root form" document (where JIM-defined blocks appear at the JSON root) or as an "enveloped form" document (where JIM-defined blocks appear under a nested <code>jim</code> block). Both forms represent the same conceptual information model.</p>
-   <p>The enveloped form separates normative JIM metadata (<code>jim</code>) from optional non-JIM metadata (<code>extensions</code>). This separation makes trust boundaries explicit, supports vendor innovation without affecting conformance, and enables audit mechanisms to target the JIM-defined information model without binding unrelated metadata.</p>
+   <p>The enveloped form separates normative JIM metadata (<code>jim</code>) from optional non-JIM metadata (<code>extensions</code>). This separation makes trust boundaries explicit, supports vendor innovation without affecting conformance, and enables audit mechanisms to target the JIM-defined information model without covering unrelated metadata.</p>
    <p>When using the enveloped form, the JSON document root is an envelope object that may contain the following blocks:</p>
    <ul>
     <li data-md>
@@ -2396,7 +2429,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
  <c- f>"datasets"</c-><c- p>:</c-> <c- p>[</c->
     …
   <c- p>],</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     …
   <c- p>},</c->
   <c- f>"behaviors"</c-><c- p>:</c->  <c- p>[</c->
@@ -2410,7 +2443,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
     <c- f>"datasets"</c-><c- p>:</c-> <c- p>[</c->
       …
     <c- p>],</c->
-    <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
       …
     <c- p>},</c->
     <c- f>"behaviors"</c-><c- p>:</c->  <c- p>[</c->
@@ -2434,7 +2467,7 @@ Note that the examples below are notional, and intended for illustrative purpose
 <pre class="highlight"><c- p>{</c->
   <c- f>"datasets"</c-><c- p>:</c-> <c- p>[</c->
   <c- p>],</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
   <c- p>},</c->
   <c- f>"behaviors"</c-><c- p>:</c-> <c- p>[</c->
   <c- p>],</c->
@@ -2460,7 +2493,7 @@ Note that the examples below are notional, and intended for illustrative purpose
    <p class="note" role="note"><span class="marker">Note:</span> Multiple datasets serve the use cases of: representing more than one type of chart in the same rendered chart, such as a line chart superimposed over a bar chart; representing multiple scales, such as a line chart with 2 series, each of which is on a different scale (e.g. where there are two y-axes, one on each side of the chart); dashboards with multiple charts, especially when two of the charts are closely related or show different aspects of the same data; and data that is comes from disparate sources or provenance.</p>
    <p class="note" role="note"><span class="marker">Note:</span> As a heuristic, if all of the facets (and sources) are identical between two or more datasets, they can be merged into a single dataset object; but if any of the facets (or sources) is different, they are better represented as different datasets.</p>
    <h4 class="heading settled" data-level="4.1.1" id="dataset_fidelity"><span class="secno">4.1.1. </span><span class="content">Fidelity in dataset representation</span><a class="self-link" href="#dataset_fidelity"></a></h4>
-   <p>A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the <code>datasets</code> block, including the selectors that bind a DOM representation to the JSONPath of the represented data.</p>
+   <p>A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the <code>datasets</code> block, including the bindings that tie a DOM representation to the JSONPath of the represented data.</p>
    <p>A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format.</p>
    <blockquote>
     <p>Not all graphical documents, especially those that show illustrations rather than structured charts, have an obvious or useful JSON representation. If no schema defined in this specification matches the type of graphics depicted in the document, then a JIM block can still be useful in providing the title, description, provenance, and other information.</p>
@@ -2480,15 +2513,15 @@ Note that the examples below are notional, and intended for illustrative purpose
     <p>There are a number of useful scenarios where a data superset occurs. For example, an author may wish for others to have their whole dataset for independent verification, even though the author focuses a visualization on only one aspect of that dataset; or, a user may "zoom in" on a shorter range of the data, in an interactive chart that enables that.</p>
    </blockquote>
    <h5 class="heading settled" data-level="4.1.1.2" id="dataset_sync"><span class="secno">4.1.1.2. </span><span class="content">Synchronizing datasets and representations</span><a class="self-link" href="#dataset_sync"></a></h5>
-   <p>Conforming authoring tools, including any software that enables editing of graphics or data, must ensure that any changes to the graphics that represent data are also changed in the corresponding data, that any changes to the data are also changed in the corresponding graphics, and that any relevant selectors still bind the corresponding data and representation.</p>
+   <p>Conforming authoring tools, including any software that enables editing of graphics or data, must ensure that any changes to the graphics that represent data are also changed in the corresponding data, that any changes to the data are also changed in the corresponding graphics, and that any relevant bindings still tie the corresponding data and representation.</p>
    <h5 class="heading settled" data-level="4.1.1.3" id="misrepresent"><span class="secno">4.1.1.3. </span><span class="content">Conforming misrepresentation of datasets</span><a class="self-link" href="#misrepresent"></a></h5>
    <p>This specification does not place conformance restrictions on the accuracy, aptness, or honesty of the data representation.</p>
-   <p>A visualization which contains mistakes in the dataset itself or in the visualization, which uses the wrong type of chart for the data, or which is deliberately misleading does not necessarily fail in conformance to this specification, so long as the document uses accurate <code>datasets</code> and corresponding <code>selectors</code>.</p>
+   <p>A visualization which contains mistakes in the dataset itself or in the visualization, which uses the wrong type of chart for the data, or which is deliberately misleading does not necessarily fail in conformance to this specification, so long as the document uses accurate <code>datasets</code> and corresponding <code>bindings</code>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The authors of this specification strongly condemn misrepresenting data with a visualization. However, this is an ethical issue, not a technical or interoperability issue.</p>
    <h4 class="heading settled" data-level="4.1.2" id="dataset_structures"><span class="secno">4.1.2. </span><span class="content">Dataset structures</span><a class="self-link" href="#dataset_structures"></a></h4>
    <p>This specification requires that an inline dataset must be in JSON format, but does not mandate a particular structure for a dataset.</p>
    <p>No single dataset structure optimally represents every different kind of data or chart type. Often, an inline dataset might reflect the internal model used by the software that generated the image, diagram, or data visualization.</p>
-   <p>Instead, this specification defines the <code>selector</code> attribute, which can be added to an object in an arbitrary JSON data structure to indicate a link between a data point and its graphical representation element.</p>
+   <p>Instead, this specification defines the <code>selector</code> attribute, which can be added to an object in an arbitrary JSON data structure to indicate a tie between a data point and its graphical representation element.</p>
    <p>This specification does include a set of canonical dataset structures which may be used. However, conforming implementations may express the dataset in a different JSON structure, so long as it includes the same set of keys as in the schema.</p>
    <h5 class="heading settled" data-level="4.1.2.1" id="structured_data"><span class="secno">4.1.2.1. </span><span class="content">Structured data</span><a class="self-link" href="#structured_data"></a></h5>
    <p>Structured data includes faceted data, whether qualitative or quantitative, that can be conform to a well-defined schema. Normally, structured data is represented by a chart or graph.</p>
@@ -2632,8 +2665,8 @@ An example of a <code>datasets</code> block (with elided values) for a structure
       <td>optional for unstructured data, required for structured and semi-structured data
      <tr>
       <td><code>structure</code>
-      <td>string
-      <td>The structure steps of a subtype, organized by <code>role</code> and 'by'
+      <td>ordered array
+      <td>The structure steps of a subtype, organized by <code>role</code> and <code>facet-keys</code>
       <td>optional
    </table>
    <p>The <code>structure</code> key of the <code>representation</code> block is an optional ordered array that describes how a consumer may group, nest, or otherwise organize a representation using one or more facets. It is intended to provide declarative guidance for common organization patterns without defining a complete rendering grammar.</p>
@@ -3009,19 +3042,20 @@ An example of a <code>facets</code> block with two <code>[facet-string]</code> o
    <p>TODO: describe the <code>source</code> object</p>
    <h4 class="heading settled" data-level="4.1.10" id="href_data_block"><span class="secno">4.1.10. </span><span class="content">The <code>href</code> key in a <code>datasets</code> block</span><a class="self-link" href="#href_data_block"></a></h4>
    <p>The <code>href</code> key defines an object that refers to an external data file. The content model and processing of the <code>href</code> key are different in the <code>datasets</code> block than in other metadata blocks.</p>
-   <p>This external file can be used to link data to graphical elements, as defined in <a href="#inline_data">Inline data</a>.</p>
-   <h3 class="heading settled" data-level="4.2" id="selectors"><span class="secno">4.2. </span><span class="content">Selectors</span><a class="self-link" href="#selectors"></a></h3>
-   <p>In order to identify and link between the DOM of an SVG document and the JSON metadata, this specification uses CSS Selectors and JSONPath.</p>
+   <p>This external file can be used to tie data to graphical elements, as defined in <a href="#inline_data">Inline data</a>.</p>
+   <h3 class="heading settled" data-level="4.2" id="bindings"><span class="secno">4.2. </span><span class="content">Bindings</span><a class="self-link" href="#bindings"></a></h3>
+   <p>A binding is a declared association between one or more DOM elements and one or more locations in the JIM data. It is not a live or reactive data-binding mechanism.</p>
+   <p>In order to tie elements in the DOM of an SVG document to the JSON metadata, this specification uses CSS Selectors and JSONPath.</p>
    <p>CSS Selectors <a data-link-type="biblio" href="#biblio-selectors-4" title="Selectors Level 4">[Selectors-4]</a> enables the matching of DOM nodes, such as graphical or textual elements.</p>
    <p>JSONPath <a data-link-type="biblio" href="#biblio-jsonpath" title="JSONPath: Query expressions for JSON">[JSONPath]</a> enables the matching of JSON keys or values in the JSON metadata. Conforming implementations must implement JSONPath (RFC 9535) semantics.</p>
    <blockquote>
-    <p>TODO: include more details about linking</p>
+    <p>TODO: include more details about bindings</p>
    </blockquote>
-   <h4 class="heading settled" data-level="4.2.1" id="selectors_block"><span class="secno">4.2.1. </span><span class="content">The <code>selectors</code> block data</span><a class="self-link" href="#selectors_block"></a></h4>
-   <p>The <code>selectors</code> block is an object containing named sets of selectors.</p>
-   <p>The <code>selectors</code> object contains one or more <code>[selector-string]</code> keys. A <code>[selector-string]</code> key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the selector set (e.g. <code>"title"</code>, <code>"bar-3"</code>, or <code>"axis_labels"</code>). Each <code>[selector-string]</code> is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the selector set.</p>
-   <p>These <code>[selector-string]</code> keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each <code>[selector-string]</code> key must be a unique value.</p>
-   <h5 class="heading settled" data-level="4.2.1.1" id="selectorstring_data_block"><span class="secno">4.2.1.1. </span><span class="content">The <code>[selector-string]</code> key</span><a class="self-link" href="#selectorstring_data_block"></a></h5>
+   <h4 class="heading settled" data-level="4.2.1" id="bindings_block"><span class="secno">4.2.1. </span><span class="content">The <code>bindings</code> block</span><a class="self-link" href="#bindings_block"></a></h4>
+   <p>The <code>bindings</code> block is an object containing named bindings.</p>
+   <p>The <code>bindings</code> object contains one or more <code>[binding-name]</code> keys. A <code>[binding-name]</code> key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. <code>"title"</code>, <code>"bar-3"</code>, or <code>"axis_labels"</code>). Each <code>[binding-name]</code> is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the binding.</p>
+   <p>These <code>[binding-name]</code> keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each <code>[binding-name]</code> key must be a unique value.</p>
+   <h5 class="heading settled" data-level="4.2.1.1" id="bindingname_data_block"><span class="secno">4.2.1.1. </span><span class="content">The <code>[binding-name]</code> key</span><a class="self-link" href="#bindingname_data_block"></a></h5>
    <table class="data">
     <thead>
      <tr>
@@ -3051,22 +3085,22 @@ An example of a <code>facets</code> block with two <code>[facet-string]</code> o
      <tr>
       <td><code>note</code>
       <td>non-empty string
-      <td>A human-readable description of what the selector set represents. This is informational only.
+      <td>A human-readable description of what the binding represents. This is informational only.
       <td>optional
    </table>
    <blockquote>
-    <p>TODO: Maybe we could also add an option for a <code>class</code> key (with an array of strings as the value), so all selectors sets with a certain class can be addressed by target selectors?</p>
+    <p>TODO: Maybe we could also add an option for a <code>class</code> key (with an array of strings as the value), so all bindings with a certain class can be addressed by target selectors?</p>
    </blockquote>
-   <div class="example" id="xmp_selector_syntax">
-    <a class="self-link" href="#xmp_selector_syntax"></a>
-An example of a <code>selectors</code> block with three selector set object entries. 
+   <div class="example" id="xmp_binding_syntax">
+    <a class="self-link" href="#xmp_binding_syntax"></a>
+An example of a <code>bindings</code> block with three bindings. 
 
 
-    <p>The first selector set object selects an element with the <code>id="chart-title"</code> as the target element, and associates that with the object key for the title of the first dataset in the JSON.</p>
-    <p>The second selector set object selects an element with a complex DOM selector for an element without an <code>id</code> attribute as the target element, and associates that with the object key for a label of a record in the dataset of the JSON.</p>
-    <p>The third selector set object selects an element with <code>id="datapoint-Sunday_2000"</code> as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.</p>
+    <p>The first binding selects an element with the <code>id="chart-title"</code> as the target element, and associates that with the object key for the title of the first dataset in the JSON.</p>
+    <p>The second binding selects an element with a complex DOM selector for an element without an <code>id</code> attribute as the target element, and associates that with the object key for a label of a record in the dataset of the JSON.</p>
+    <p>The third binding selects an element with <code>id="datapoint-Sunday_2000"</code> as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.</p>
 <pre class="highlight"><c- p>{</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"title"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#chart-title"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].title"</c->
@@ -3084,16 +3118,16 @@ An example of a <code>selectors</code> block with three selector set object entr
 <c- p>}</c->
 </pre>
    </div>
-   <div class="example" id="xmp_selector_alternate_syntax">
-    <a class="self-link" href="#xmp_selector_alternate_syntax"></a>
-An example of a <code>selectors</code> block with two selector set object entries with alternate syntaxes for the same kind of connection. 
+   <div class="example" id="xmp_binding_alternate_syntax">
+    <a class="self-link" href="#xmp_binding_alternate_syntax"></a>
+An example of a <code>bindings</code> block with two bindings with alternate syntaxes for the same kind of connection. 
 
 
-    <p>The first selector set object selects an element with the <code>id="datapoint-Sunday_2000"</code> as the target element, and associates that with the object key for the <code>x</code> and <code>y</code> values of a record in the dataset of the JSON, using an array of JSONPath selectors.</p>
-    <p>The second selector set object selects an element with <code>id="datapoint-Monday_2000"</code> as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.</p>
-    <p>Assuming a record structure with only <code>x</code> and <code>y</code> keys, these selectors would yield the same outcome, making the wildcard selector a shorthand for the array syntax.</p>
+    <p>The first binding selects an element with the <code>id="datapoint-Sunday_2000"</code> as the target element, and associates that with the object key for the <code>x</code> and <code>y</code> values of a record in the dataset of the JSON, using an array of JSONPath selectors.</p>
+    <p>The second binding selects an element with <code>id="datapoint-Monday_2000"</code> as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.</p>
+    <p>Assuming a record structure with only <code>x</code> and <code>y</code> keys, these bindings would yield the same outcome, making the wildcard selector a shorthand for the array syntax.</p>
 <pre class="highlight"><c- p>{</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"dp0"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#datapoint-Sunday_2000"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- p>[</c->
@@ -3110,17 +3144,17 @@ An example of a <code>selectors</code> block with two selector set object entrie
 </pre>
    </div>
    <blockquote>
-    <p>TODO: provide examples of one-to-many,  many-to-one, and  many-to-many selector sets.</p>
+    <p>TODO: provide examples of one-to-many,  many-to-one, and  many-to-many bindings.</p>
    </blockquote>
-   <h5 class="heading settled" data-level="4.2.1.2" id="selectorstring_target_selector"><span class="secno">4.2.1.2. </span><span class="content"><code>[selector-string]</code> as target selector</span><a class="self-link" href="#selectorstring_target_selector"></a></h5>
-   <p>The JSONPath for any given <code>[selector-string]</code> key can be used as the value of a behavior <a href="#targets">target selector</a>.</p>
-   <div class="example" id="xmp_selector_behavior">
-    <a class="self-link" href="#xmp_selector_behavior"></a>
-An example of a <code>selector</code> block with one selector set object entry, and a <code>behaviors</code> block with an entry referencing that selector set by its JSONPath.
+   <h5 class="heading settled" data-level="4.2.1.2" id="binding_target"><span class="secno">4.2.1.2. </span><span class="content">Bindings as targets</span><a class="self-link" href="#binding_target"></a></h5>
+   <p>The JSONPath for any given binding can be used as the value of a behavior <a href="#targets">target selector</a>.</p>
+   <div class="example" id="xmp_binding_behavior">
+    <a class="self-link" href="#xmp_binding_behavior"></a>
+An example of a <code>bindings</code> block with one binding, and a <code>behaviors</code> block with an entry referencing that binding by its JSONPath.
 
 
 <pre class="highlight"><c- p>{</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"dp5"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#datapoint-Thursday_2000"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[4].*"</c->
@@ -3129,7 +3163,7 @@ An example of a <code>selector</code> block with one selector set object entry, 
   <c- f>"behaviors"</c-><c- p>:</c-> <c- p>[</c->
     <c- p>{</c->
       <c- f>"target"</c-><c- p>:</c-> <c- p>{</c->
-        <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.selectors.dp5"</c->
+        <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.bindings.dp5"</c->
       <c- p>},</c->
       <c- f>"enter"</c-><c- p>:</c-> <c- p>{</c->
         <c- p>{</c->
@@ -3145,8 +3179,8 @@ An example of a <code>selector</code> block with one selector set object entry, 
    </div>
    <h4 class="heading settled" data-level="4.2.2" id="inline_data"><span class="secno">4.2.2. </span><span class="content">Inline data</span><a class="self-link" href="#inline_data"></a></h4>
    <p>If a dataset is fairly small, it is best to include it in the image file directly.</p>
-   <h5 class="heading settled" data-level="4.2.2.1" id="linking_data"><span class="secno">4.2.2.1. </span><span class="content">Linking data and representational elements</span><a class="self-link" href="#linking_data"></a></h5>
-   <p>Each data point in the raw data <code>may</code> be represented visually in the image. There are multiple benefits in providing a mechanism to link a data point in the dataset to its representation, such as enabling users to drill down into the raw data value for a data element, or selecting a label in a different language than the graphical text label.</p>
+   <h5 class="heading settled" data-level="4.2.2.1" id="tying_data"><span class="secno">4.2.2.1. </span><span class="content">Tying data and representational elements</span><a class="self-link" href="#tying_data"></a></h5>
+   <p>Each data point in the raw data <code>may</code> be represented visually in the image. There are multiple benefits in providing a mechanism to tie a data point in the dataset to its representation, such as enabling users to drill down into the raw data value for a data element, or selecting a label in a different language than the graphical text label.</p>
    <p>This specification defines a <code>selector</code> attribute to enable this relationship between a graphical element and the data point it represents.</p>
    <h6 class="heading settled" data-level="4.2.2.1.1" id="data_model_cardinality"><span class="secno">4.2.2.1.1. </span><span class="content">Data model cardinality</span><a class="self-link" href="#data_model_cardinality"></a></h6>
    <p>The relationship between a graphical element and the data it represents might be complex.</p>
@@ -3175,7 +3209,7 @@ An example of a <code>selector</code> block with one selector set object entry, 
 <pre class="highlight"><c- p>{</c->
   <c- f>"href"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"datasets"</c-><c- p>:</c-> <c- u>"https://path.to.datasets"</c-><c- p>,</c->
-    <c- f>"selectors"</c-><c- p>:</c-> <c- u>"https://path.to.selectors"</c-><c- p>,</c->
+    <c- f>"bindings"</c-><c- p>:</c-> <c- u>"https://path.to.bindings"</c-><c- p>,</c->
     <c- f>"behaviors"</c-><c- p>:</c-> <c- u>"https://path.to.behaviors"</c-><c- p>,</c->
     <c- f>"provenance"</c-><c- p>:</c-> <c- u>"https://path.to.provenance"</c-><c- p>,</c->
     <c- f>"tags"</c-><c- p>:</c-> <c- u>"https://path.to.tags"</c-><c- p>,</c->
@@ -3192,7 +3226,7 @@ An example of a <code>selector</code> block with one selector set object entry, 
    <h3 class="heading settled" data-level="4.4" id="behaviors"><span class="secno">4.4. </span><span class="content">Behaviors</span><a class="self-link" href="#behaviors"></a></h3>
    <p>A <code>behaviors</code> block is an array with the key <code>behaviors</code>, which contains one or more objects including at least a target (defined by the <code>target</code> key), and an <code>announcement</code> and/or an event type containing  one or more of the behaviors, including <code>haptic</code>, <code>audio</code>, <code>sonification</code>, <code>contrast</code>, and <code>tactile</code>.</p>
    <h4 class="heading settled" data-level="4.4.1" id="behavior_generators"><span class="secno">4.4.1. </span><span class="content">Behavior and conforming generators</span><a class="self-link" href="#behavior_generators"></a></h4>
-   <p>A generator conforming to this specification is not required to add behaviors to graphics, only a dataset and selectors.</p>
+   <p>A generator conforming to this specification is not required to add behaviors to graphics, only a dataset and bindings.</p>
    <p class="note" role="note"><span class="marker">Note:</span> While this specification does not define best practices for different behaviors for different classes of user agent and graphics, a companion best practices document is under development. A conforming generator might be much more useful if it also follows that guidance and generates graphic documents with behaviors optimized for the target user agent capabilities.</p>
    <h4 class="heading settled" data-level="4.4.2" id="behavior_events"><span class="secno">4.4.2. </span><span class="content">Behavior events</span><a class="self-link" href="#behavior_events"></a></h4>
    <p>An event block is an object with the one of the <code>enter</code>, <code>details</code>, <code>activate</code>, and <code>exit</code> keys, and a value which is a list of key-value pairs defining specific behaviors.</p>
@@ -3370,7 +3404,7 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
    <p>A conforming document may include an optional <code>version</code> key.</p>
    <p>A <code>version</code> block is an object with the key <code>version</code>, which contains one or more key-value pairs including one or more of the keys <code>document</code> and <code>jim</code> and their values.</p>
    <p>A <code>version</code> block, if present, must be at the root level of the JIM document.</p>
-   <p>A <code>version</code> block, if present, must include a <code>jim</code> key with a valid value. The value of the <code>jim</code> key must be a string conforming to the Semantic Versioning 2.0.0 specification, 3 integers separated by periods (<code>.</code>). The default value of the <code>jim</code> key is <code>1.0.0</code>. The value must refer to a published version of the JIM specification.</p>
+   <p>A <code>version</code> block, if present, must include a <code>jim</code> key with a valid value. The value of the <code>jim</code> key must be a string conforming to the Semantic Versioning 2.0.0 specification, 3 integers separated by periods (<code>.</code>). The value must refer to a published version of the JIM specification. If the <code>version</code> block or its <code>jim</code> key is absent, consumers should process the document according to the most recent version of this specification they support.</p>
    <p>The optional <code>document</code> key defines the version of the document itself. The value of the optional <code>document</code> key, if present, may be any non-empty string that is meaningful to the author, but it should be a string conforming to the Semantic Versioning 2.0.0 specification.</p>
    <table class="data">
     <thead>
@@ -3402,7 +3436,7 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
 <pre class="highlight"><c- p>{</c->
   <c- f>"version"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"document"</c-><c- p>:</c-> <c- u>"1.0.1"</c-><c- p>,</c->
-    <c- f>"jim"</c-><c- p>:</c-> <c- u>"0.4.2"</c-><c- p>,</c->
+    <c- f>"jim"</c-><c- p>:</c-> <c- u>"2.0.0"</c->
   <c- p>}</c->
 <c- p>}</c->
 </pre>
@@ -3411,14 +3445,14 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
    <p>Targets may consist of one of three possible values:</p>
    <ol>
     <li data-md>
-     <p><strong>An element link</strong>: a selector indicating a specific element or set of elements in the DOM of a SVG file;</p>
+     <p><strong>An element selector</strong>: a CSS selector indicating a specific element or set of elements in the DOM of a SVG file;</p>
     <li data-md>
-     <p><strong>An JSONPath link</strong>: a selector indicating a specific selector set in the JIM of a SVG file;</p>
+     <p><strong>A binding selector</strong>: a JSONPath selector indicating a specific binding in the JIM of a SVG file;</p>
     <li data-md>
      <p><strong>A</strong> <code>shapes</code> <strong>array</strong>: an array of objects that defines a shape to be dynamically represented in the diagram file.</p>
    </ol>
    <h3 class="heading settled" data-level="5.1" id="target_selector_key"><span class="secno">5.1. </span><span class="content">Target <code>selector</code> key</span><a class="self-link" href="#target_selector_key"></a></h3>
-   <p>A target may consist of a <code>selector</code> key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a selector set.</p>
+   <p>A target may consist of a <code>selector</code> key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding.</p>
    <h4 class="heading settled" data-level="5.1.1" id="target_element_selector"><span class="secno">5.1.1. </span><span class="content">Target <code>selector</code> for elements</span><a class="self-link" href="#target_element_selector"></a></h4>
    <p>An element target may be a textual element, a shape element, or a container element. If the selector target is a container element, the shape target is all targetable elements within that container, but not the bounding box of the container element itself.</p>
    <p>If the selector is not valid, or if the target element is not found, the <code>target</code> definition is ignored.</p>
@@ -3458,18 +3492,18 @@ A target selector targeting all elements in the container element <code>graph_ar
 <c- p>}</c->
 </pre>
    </div>
-   <h4 class="heading settled" data-level="5.1.2" id="target_selector_set_selector"><span class="secno">5.1.2. </span><span class="content">Target <code>selector</code> for selector sets</span><a class="self-link" href="#target_selector_set_selector"></a></h4>
-   <p>A selector set target may be a JSONPath selector pointing to a selector set, or an array of such JSONPath selectors.</p>
+   <h4 class="heading settled" data-level="5.1.2" id="target_binding_selector"><span class="secno">5.1.2. </span><span class="content">Target <code>selector</code> for bindings</span><a class="self-link" href="#target_binding_selector"></a></h4>
+   <p>A binding target may be a JSONPath selector pointing to a binding, or an array of such JSONPath selectors.</p>
    <blockquote>
     <p>TODO: Expand on this.</p>
    </blockquote>
-   <div class="example" id="xmp_selector_set_selector">
-    <a class="self-link" href="#xmp_selector_set_selector"></a>
-An example of a <code>target</code> block with a <code>selector</code> key which has a JSONPath selector addressing a labeled selector set.
+   <div class="example" id="xmp_target_binding_selector">
+    <a class="self-link" href="#xmp_target_binding_selector"></a>
+An example of a <code>target</code> block with a <code>selector</code> key which has a JSONPath selector addressing a named binding.
 
 
 <pre class="highlight"><c- p>{</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"dp5"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#datapoint-Thursday_2000"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[4].*"</c->
@@ -3478,7 +3512,7 @@ An example of a <code>target</code> block with a <code>selector</code> key which
   <c- f>"behaviors"</c-><c- p>:</c-> <c- p>[</c->
     <c- p>{</c->
       <c- f>"target"</c-><c- p>:</c-> <c- p>{</c->
-        <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.selectors.dp5"</c->
+        <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.bindings.dp5"</c->
       <c- p>}</c->
     <c- p>}</c->
   <c- p>]</c->
@@ -3604,7 +3638,7 @@ A target describing a hexagonal area using the <code>path</code> definition and 
    <p>A conforming user agent may allow a user to change the default announcement content to include both the key and the value for any valid endpoint.</p>
    <div class="example" id="xmp_implicit_announcement">
     <a class="self-link" href="#xmp_implicit_announcement"></a>
-An example of a default implicit announcment based on a <code>selectors</code> block. 
+An example of a default implicit announcment based on a <code>bindings</code> block. 
 
 
     <p>In this example, when the user moves the pointer over the SVG element with the <code>id</code> of <code>datapoint-Sunday_2000</code>, the conforming JIM viewer would announce, "2000, Sunday, 57".</p>
@@ -3628,7 +3662,7 @@ An example of a default implicit announcment based on a <code>selectors</code> b
       <c- p>]</c->
     <c- p>}</c->
   <c- p>],</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"Sunday_2000"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#datapoint-Sunday_2000"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- p>[</c->
@@ -3693,7 +3727,7 @@ An example of a default implicit announcment based on a <code>selectors</code> b
      <p>To distinguish the element from other elements in the graphic.</p>
    </ol>
    <p>A document conforming to this specification must define an <b>announcement name</b> for all visual elements that convey meaning, unless that element is deliberately excluded (such as to remove redundancy or simplify a graphic).</p>
-   <p>As noted in the <a href="#implicit_announcements">implicit announcements section</a>, the default announcement name for a meaningful element is defined by the selector structure, and can be overridden in an explicit <code>announcement</code> block.</p>
+   <p>As noted in the <a href="#implicit_announcements">implicit announcements section</a>, the default announcement name for a meaningful element is defined by the binding, and can be overridden in an explicit <code>announcement</code> block.</p>
 <pre class="highlight"><c- p>{</c->
   <c- f>"announcement"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"name"</c-><c- p>:</c-> <c- u>"purpose of the element"</c->
@@ -3727,10 +3761,10 @@ An example of a default implicit announcment based on a <code>selectors</code> b
    <h3 class="heading settled" data-level="6.4" id="complete_announcement_example"><span class="secno">6.4. </span><span class="content">Complete announcement example</span><a class="self-link" href="#complete_announcement_example"></a></h3>
    <div class="example" id="xmp_explicit_announcement">
     <a class="self-link" href="#xmp_explicit_announcement"></a>
-An example of a default explicit announcment based on a <code>selectors</code> block. 
+An example of a default explicit announcment based on a <code>bindings</code> block. 
 
 
-    <p>An example of a <code>selector</code> block with one selector set object entry, a <code>behaviors</code> block with an entry referencing that selector set by its JSONPath, an <code>announcement</code> block, and a <code>haptic</code> block triggered on an <code>enter</code> event.</p>
+    <p>An example of a <code>bindings</code> block with one binding, a <code>behaviors</code> block with an entry referencing that binding by its JSONPath, an <code>announcement</code> block, and a <code>haptic</code> block triggered on an <code>enter</code> event.</p>
     <p>In this example, when the user moves the pointer over the SVG element with the <code>id</code> of <code>datapoint-Sunday_2000</code>, the conforming JIM viewer might announce, "2000, Sunday: $57", and play the haptic feedback. If the user requested more information (e.g., with a double-tap, long tap, or simply waiting, depending on the viewer UI), the viewer would announce "This is an increase of $8 over the previous value".</p>
 <pre class="highlight"><c- p>{</c->
   <c- f>"datasets"</c-><c- p>:</c-> <c- p>[</c->
@@ -3752,7 +3786,7 @@ An example of a default explicit announcment based on a <code>selectors</code> b
       <c- p>]</c->
     <c- p>}</c->
   <c- p>],</c->
-  <c- f>"selectors"</c-><c- p>:</c-> <c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"Sunday_2000"</c-><c- p>:</c-> <c- p>{</c->
       <c- f>"dom"</c-><c- p>:</c-> <c- u>"#datapoint-Sunday_2000"</c-><c- p>,</c->
       <c- f>"json"</c-><c- p>:</c-> <c- p>[</c->
@@ -3763,7 +3797,7 @@ An example of a default explicit announcment based on a <code>selectors</code> b
     <c- f>"behaviors"</c-><c- p>:</c-> <c- p>[</c->
       <c- p>{</c->
         <c- f>"target"</c-><c- p>:</c-> <c- p>{</c->
-          <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.selectors.Sunday_2000"</c->
+          <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.bindings.Sunday_2000"</c->
         <c- p>},</c->
         <c- f>"announcement"</c-><c- p>:</c-> <c- p>{</c->
           <c- f>"name"</c-><c- p>:</c-> <c- u>"Sunday, 2000: $57"</c-><c- p>,</c->
@@ -4024,7 +4058,7 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
      <tr>
       <td><code>viewport</code>
       <td>object
-      <td>An object defining the <code>x</code>, <code>y</code>, <code>width</code>, and <code>height</code> of the viewport
+      <td>An object defining the <code>x</code>, <code>y</code>, <code>width</code>, and <code>height</code> of the viewport;  <code>x</code>, <code>y</code>, <code>width</code>, and <code>height</code> have the <code>number</code> datatype, and are the user units as defined in the SVG specification.
       <td>optional
      <tr>
       <td><code>styles</code>
@@ -4038,10 +4072,10 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
       <c- f>"name"</c-><c- p>:</c-> <c- u>"North Carolina"</c-><c- p>,</c->
       <c- f>"description"</c-><c- p>:</c-> <c- u>"The US state of North Carolina, with counties and major cities"</c-><c- p>,</c->
       <c- f>"viewport"</c-><c- p>:</c-> <c- p>{</c->
-        <c- f>"x"</c-><c- p>:</c-> <c- u>"279"</c-><c- p>,</c->
-        <c- f>"y"</c-><c- p>:</c-> <c- u>"90"</c-><c- p>,</c->
-        <c- f>"width"</c-><c- p>:</c-> <c- u>"60"</c-><c- p>,</c->
-        <c- f>"height"</c-><c- p>:</c-> <c- u>"80"</c->
+        <c- f>"x"</c-><c- p>:</c-> <c- mi>279</c-><c- p>,</c->
+        <c- f>"y"</c-><c- p>:</c-> <c- mi>90</c-><c- p>,</c->
+        <c- f>"width"</c-><c- p>:</c-> <c- mi>60</c-><c- p>,</c->
+        <c- f>"height"</c-><c- p>:</c-> <c- mi>80</c->
       <c- p>},</c->
       <c- f>"styles"</c-><c- p>:</c-> <c- p>{</c->
         <c- f>".county"</c-><c- p>:</c-> <c- p>{</c->
@@ -4099,7 +4133,7 @@ Device capabilities….
    </div>
    <p>TODO: Define and describe mechanisms for setting layers on objects (e.g. print only, print and tactile, emboss only, braille)</p>
    <h3 class="heading settled" data-level="11.2" id="object_search_capabilities"><span class="secno">11.2. </span><span class="content">Object Search Capabilities</span><a class="self-link" href="#object_search_capabilities"></a></h3>
-   <p>For touch screen and similar devices, by way of aiding the user’s orientation withi a graphic document, a conforming JIM viewer should provide a means to guide an end user to any target object (that is, any object with a selector, accessible name, or text content) in the graphic document.</p>
+   <p>For touch screen and similar devices, by way of aiding the user’s orientation withi a graphic document, a conforming JIM viewer should provide a means to guide an end user to any target object (that is, any object with a binding or target selector, accessible name, or text content) in the graphic document.</p>
    <p>The means that the conforming JIM viewer uses to guide the user may vary. At the minimum, the viewer should allow the end user to chose any target object from a list of all available target objects, and provide verbal, auditory, or haptic cues that guides the end user from their current pointer position to the chosen target object.</p>
    <h2 class="heading settled" data-level="12" id="tech_relationship"><span class="secno">12. </span><span class="content">Relationship to other technologies</span><a class="self-link" href="#tech_relationship"></a></h2>
    <h3 class="heading settled" data-level="12.1" id="svg"><span class="secno">12.1. </span><span class="content">Scalable Vector Graphics (SVG)</span><a class="self-link" href="#svg"></a></h3>
@@ -4117,7 +4151,7 @@ Device capabilities….
    <p>This specification uses the common JSON format, which can be processed by any JSON tools, including web browser contexts, JavaScript, and many other tools.</p>
    <p>This specification attempts to define its rules in a way that CSS might be expresssed in JSON.</p>
    <h4 class="heading settled" data-level="12.2.2" id="css_selectors"><span class="secno">12.2.2. </span><span class="content">CSS selectors</span><a class="self-link" href="#css_selectors"></a></h4>
-   <p>This specification uses the CSS selector syntax to link specific metadata entries to specific markup elements, to classes on markup elements, or other linking mechanisms. Unlike CSS, however, it does not use selectors as an "object key", but rather as a value for a <code>selector</code> attribute, to fit the JSON schema and allow multiple rules to use the same selector.</p>
+   <p>This specification uses the CSS selector syntax to tie specific metadata entries to specific markup elements, to classes on markup elements, or other markup hooks. Unlike CSS, however, it does not use selectors as an "object key", but rather as a value for a <code>selector</code> attribute, to fit the JSON schema and allow multiple rules to use the same selector.</p>
    <h4 class="heading settled" data-level="12.2.3" id="intended_authoring"><span class="secno">12.2.3. </span><span class="content">Intended authoring usage</span><a class="self-link" href="#intended_authoring"></a></h4>
    <p>To enable a CSS feature that is extended in this specification, the author can include the rule in either the metadata definition or the CSS definition.</p>
    <p>If the rule is defined in the metadata, a user agent must apply in the same manner as if it were defined in the CSS. For a user agent that supports this specification, this can provide a greater degree of user control, ease authoring and maintenance, and decrease synchronization conflicts.</p>
@@ -4367,7 +4401,7 @@ For example, the following media query expresses that a rule is used on printing
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
   </dl>
-  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Non-Normative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-json-schema">[JSON-Schema]
    <dd>Austin Wright; et al. <a href="https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema"><cite>JSON Schema: A Media Type for Describing JSON Documents</cite></a>. 10 June 2022. Internet-Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema">https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema</a>
@@ -4378,7 +4412,7 @@ For example, the following media query expresses that a rule is used on printing
    <dt id="biblio-svg11">[SVG11]
    <dd>Erik Dahlström; et al. <a href="https://www.w3.org/TR/SVG11/"><cite>Scalable Vector Graphics (SVG) 1.1 (Second Edition)</cite></a>. 16 August 2011. REC. URL: <a href="https://www.w3.org/TR/SVG11/">https://www.w3.org/TR/SVG11/</a>
    <dt id="biblio-svg2">[SVG2]
-   <dd>Amelia Bellamy-Royds; et al. <a href="https://svgwg.org/svg2-draft/"><cite>Scalable Vector Graphics (SVG) 2</cite></a>. URL: <a href="https://svgwg.org/svg2-draft/">https://svgwg.org/svg2-draft/</a>
+   <dd>Karl Dubost; et al. <a href="https://w3c.github.io/svgwg/svg2-draft/"><cite>Scalable Vector Graphics (SVG) 2</cite></a>. URL: <a href="https://w3c.github.io/svgwg/svg2-draft/">https://w3c.github.io/svgwg/svg2-draft/</a>
    <dt id="biblio-vibration">[VIBRATION]
    <dd>Anssi Kostiainen. <a href="https://w3c.github.io/vibration/"><cite>Vibration API</cite></a>. URL: <a href="https://w3c.github.io/vibration/">https://w3c.github.io/vibration/</a>
   </dl>
