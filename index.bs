@@ -2,7 +2,7 @@
 Title: JSON Image Metadata
 Shortname: jim
 Level: 1
-Status: fido/ED
+Status: LD
 !Semantic Version: 2.0.0
 Repository: w3c-cg/jim-graphics
 URL: https://w3c-cg.github.io/jim-graphics/
@@ -69,12 +69,13 @@ A document conforming to this specification should specify the version number of
 An implementation conforming to this specification must store internally the version number of the specification to which it conforms, and should expose the version number to the end user. If the implementation opens a JIM document which specifies an incompatible version of JIM, the implementation must warn the end user.
 
 <div class='note'>
-Note that this specification is being developed in parallel with several experimental implementations, on a milestone basis, as part of the Inclusio Project. The minor version number (MAJOR.MINOR.PATCH) corresponds to the project milestone number across the Inclusio Project implementations.
+Note that versions of this specification prior to 2.0.0 were developed by the Inclusio Project, in parallel with several experimental implementations. Version 2.0.0 is the first version developed by the W3C JIM Structured Graphics Community Group. Version numbering continues from the Inclusio versions, so that version values in existing JIM documents remain comparable.
 </div>
 
 <div class='note'>
-Note that version 0.3.0 of this specification is the first version to use Semantic Versioning. Future versions of this specification adhere to the practice of incrementing the major version number for breaking changes.
+Note that version 0.3.0 of this specification is the first version to use Semantic Versioning. This specification increments the major version number for breaking changes.
 </div>
+
 
 
 ## Conforming document ## {#conform_doc}
@@ -1506,7 +1507,7 @@ A `version` block is an object with the key `version`, which contains one or mor
 
 A `version` block, if present, must be at the root level of the JIM document. 
 
-A `version` block, if present, must include a `jim` key with a valid value. The value of the `jim` key must be a string conforming to the Semantic Versioning 2.0.0 specification, 3 integers separated by periods (`.`). The default value of the `jim` key is `1.0.0`. The value must refer to a published version of the JIM specification.
+A `version` block, if present, must include a `jim` key with a valid value. The value of the `jim` key must be a string conforming to the Semantic Versioning 2.0.0 specification, 3 integers separated by periods (`.`). The value must refer to a published version of the JIM specification. If the `version` block or its `jim` key is absent, consumers should process the document according to the most recent version of this specification they support. 
 
 The optional `document` key defines the version of the document itself. The value of the optional `document` key, if present, may be any non-empty string that is meaningful to the author, but it should be a string conforming to the Semantic Versioning 2.0.0 specification.
 
@@ -1548,7 +1549,7 @@ The optional `document` key defines the version of the document itself. The valu
 {
   "version": {
     "document": "1.0.1",
-    "jim": "0.4.2",
+    "jim": "2.0.0"
   }
 }
 </xmp>
