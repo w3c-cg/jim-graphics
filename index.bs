@@ -6,8 +6,10 @@ Status: fido/ED
 !Semantic Version: 2.0.0
 Repository: w3c-cg/jim-graphics
 URL: https://w3c-cg.github.io/jim-graphics/
-Editor: Doug Schepers, Fizz Studio http://fizz.studio, doug@fizz.studio
-Editor: Simon Varey, Fizz Studio http://fizz.studio, simon@fizz.studio
+Editor: Doug Schepers, Fizz Studio https://fizz.studio, doug@fizz.studio
+Editor: Simon Varey, Fizz Studio https://fizz.studio, simon@fizz.studio
+Editor: Dan Gardner, ViewPlus Technologies https://www.viewplus.com, dan.gardner@viewplus.com
+Editor: Jeff Croxell, ViTAL Education https://vital.education, jeff.croxell@vital.education
 Abstract: A specification for expressing technical image metadata, with an emphasis on accessibility of data visualizations.
 Favicon: ./favicon.svg
 Complain About: accidental-2119 yes, missing-example-ids yes
