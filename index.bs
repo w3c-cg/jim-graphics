@@ -3,22 +3,22 @@ Title: JSON Image Metadata
 Shortname: jim
 Level: 1
 Status: fido/ED
-!Semantic Version: 1.1.0
-Repository: Inclusio-Community/json-image-metadata
-URL: https://Inclusio-Community.github.io/json-image-metadata/
+!Semantic Version: 2.0.0
+Repository: w3c-cg/jim-graphics
+URL: https://w3c-cg.github.io/jim-graphics/
 Editor: Doug Schepers, Fizz Studio http://fizz.studio, doug@fizz.studio
 Editor: Simon Varey, Fizz Studio http://fizz.studio, simon@fizz.studio
 Abstract: A specification for expressing technical image metadata, with an emphasis on accessibility of data visualizations.
 Favicon: ./favicon.svg
 Complain About: accidental-2119 yes, missing-example-ids yes
-Markup Shorthands: markdown yes, css no
+Markup Shorthands: markdown yes, markdown-blockquotes yes, css no
 </pre>
 
 # Introduction # {#intro}
 
 This specification defines a structured metadata schema for image documents to express information, data, and behaviors related to the visual image, with a particular emphasis on accessibility. The metadata includes raw data, provenance information, and predefined behaviors for assistive technology techniques, such as haptics, sonification, tactiles, high contrast, voicing, braille, and more.
 
-The metadata is aimed primarily at data visualizations such as charts, graphs, diagrams and other information graphics, but can also be used for related purposes in any image.
+The metadata is aimed primarily at data visualizations such as charts, graphs, diagrams, maps and other information graphics, but can also be used for related purposes in any image.
 
 It is intended for use with a structured graphics markup such as Scalable Vector Graphics (SVG), but could be embedded in and applied to any image format, including raster images and 3D objects and scenes.
 
@@ -97,7 +97,7 @@ An implementation conforming to this specification must access the contents of t
 
 A conforming implementation must provide a means for the end user to extract the contents of the `datasets` block. 
 
-A conforming implementation must resolve all selectors and execute all supported features of the `behaviors` block.
+A conforming implementation must resolve all bindings and target selectors and execute all supported features of the `behaviors` block.
 
 ### Classes of Conforming implementation ### {#conform_imp_classes}
 
@@ -114,7 +114,7 @@ Conformance does not imply any guarantees of content quality, accessibility outc
 
 A JIM document may be represented either as a "root form" document (where JIM-defined blocks appear at the JSON root) or as an "enveloped form" document (where JIM-defined blocks appear under a nested `jim` block). Both forms represent the same conceptual information model.
 
-The enveloped form separates normative JIM metadata (`jim`) from optional non-JIM metadata (`extensions`). This separation makes trust boundaries explicit, supports vendor innovation without affecting conformance, and enables audit mechanisms to target the JIM-defined information model without binding unrelated metadata.
+The enveloped form separates normative JIM metadata (`jim`) from optional non-JIM metadata (`extensions`). This separation makes trust boundaries explicit, supports vendor innovation without affecting conformance, and enables audit mechanisms to target the JIM-defined information model without covering unrelated metadata.
 
 When using the enveloped form, the JSON document root is an envelope object that may contain the following blocks:
 
@@ -159,7 +159,7 @@ Root form:
  "datasets": [
     …
   ],
-  "selectors": {
+  "bindings": {
     …
   },
   "behaviors":  [
@@ -176,7 +176,7 @@ Enveloped form:
     "datasets": [
       …
     ],
-    "selectors": {
+    "bindings": {
       …
     },
     "behaviors":  [
@@ -208,7 +208,7 @@ This vocabulary is defined in terms of "blocks", or objects identified by a key 
 {
   "datasets": [
   ],
-  "selectors": {
+  "bindings": {
   },
   "behaviors": [
   ],
@@ -244,7 +244,7 @@ Note: As a heuristic, if all of the facets (and sources) are identical between t
 
 ### Fidelity in dataset representation ### {#dataset_fidelity}
 
-A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the `datasets` block, including the selectors that bind a DOM representation to the JSONPath of the represented data.
+A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the `datasets` block, including the bindings that tie a DOM representation to the JSONPath of the represented data.
 
 A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format.
 
@@ -264,13 +264,13 @@ Valid examples of data supersets include (but are not limited to):
 
 #### Synchronizing datasets and representations #### {#dataset_sync}
 
-Conforming authoring tools, including any software that enables editing of graphics or data, must ensure that any changes to the graphics that represent data are also changed in the corresponding data, that any changes to the data are also changed in the corresponding graphics, and that any relevant selectors still bind the corresponding data and representation.  
+Conforming authoring tools, including any software that enables editing of graphics or data, must ensure that any changes to the graphics that represent data are also changed in the corresponding data, that any changes to the data are also changed in the corresponding graphics, and that any relevant bindings still tie the corresponding data and representation.  
 
 #### Conforming misrepresentation of datasets #### {#misrepresent}
 
 This specification does not place conformance restrictions on the accuracy, aptness, or honesty of the data representation.
 
-A visualization which contains mistakes in the dataset itself or in the visualization, which uses the wrong type of chart for the data, or which is deliberately misleading does not necessarily fail in conformance to this specification, so long as the document uses accurate `datasets` and corresponding `selectors`.
+A visualization which contains mistakes in the dataset itself or in the visualization, which uses the wrong type of chart for the data, or which is deliberately misleading does not necessarily fail in conformance to this specification, so long as the document uses accurate `datasets` and corresponding `bindings`.
 
 Note: The authors of this specification strongly condemn misrepresenting data with a visualization. However, this is an ethical issue, not a technical or interoperability issue.
 
@@ -280,7 +280,7 @@ This specification requires that an inline dataset must be in JSON format, but d
 
 No single dataset structure optimally represents every different kind of data or chart type. Often, an inline dataset might reflect the internal model used by the software that generated the image, diagram, or data visualization.
 
-Instead, this specification defines the `selector` attribute, which can be added to an object in an arbitrary JSON data structure to indicate a link between a data point and its graphical representation element.
+Instead, this specification defines the `selector` attribute, which can be added to an object in an arbitrary JSON data structure to indicate a tie between a data point and its graphical representation element.
 
 This specification does include a set of canonical dataset structures which may be used. However, conforming implementations may express the dataset in a different JSON structure, so long as it includes the same set of keys as in the schema.
 
@@ -468,8 +468,8 @@ The `representation` object contains the `type`, `subtype`, and `structure` keys
     </tr>
     <tr>
       <td>`structure`</td>
-      <td>string</td>
-      <td>The structure steps of a subtype, organized by `role` and 'by'</td>
+      <td>ordered array</td>
+      <td>The structure steps of a subtype, organized by `role` and `facet-keys`</td>
       <td>optional</td>
     </tr>
   </tbody>
@@ -994,34 +994,36 @@ TODO: describe the `source` object
 
 The `href` key defines an object that refers to an external data file. The content model and processing of the `href` key are different in the `datasets` block than in other metadata blocks.
 
-This external file can be used to link data to graphical elements, as defined in [Inline data](#inline_data).
+This external file can be used to tie data to graphical elements, as defined in [Inline data](#inline_data).
 
 
 
 
 
-## Selectors ## {#selectors}
+## Bindings ## {#bindings}
 
 
-In order to identify and link between the DOM of an SVG document and the JSON metadata, this specification uses CSS Selectors and JSONPath.
+A binding is a declared association between one or more DOM elements and one or more locations in the JIM data. It is not a live or reactive data-binding mechanism.
+
+In order to tie elements in the DOM of an SVG document to the JSON metadata, this specification uses CSS Selectors and JSONPath.
 
 CSS Selectors [[Selectors-4]] enables the matching of DOM nodes, such as graphical or textual elements.
 
 JSONPath [[JSONPath]] enables the matching of JSON keys or values in the JSON metadata. Conforming implementations must implement JSONPath (RFC 9535) semantics.
 
-> TODO: include more details about linking
+> TODO: include more details about bindings
 
 
 
-### The `selectors` block data ### {#selectors_block}
+### The `bindings` block ### {#bindings_block}
 
-The `selectors` block is an object containing named sets of selectors.  
+The `bindings` block is an object containing named bindings.  
 
-The `selectors` object contains one or more `[selector-string]` keys. A `[selector-string]` key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the selector set (e.g. `"title"`, `"bar-3"`, or `"axis_labels"`). Each `[selector-string]` is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the selector set.
+The `bindings` object contains one or more `[binding-name]` keys. A `[binding-name]` key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. `"title"`, `"bar-3"`, or `"axis_labels"`). Each `[binding-name]` is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the binding.
 
-These `[selector-string]` keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each `[selector-string]` key must be a unique value.
+These `[binding-name]` keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each `[binding-name]` key must be a unique value.
 
-#### The `[selector-string]` key #### {#selectorstring_data_block}
+#### The `[binding-name]` key #### {#bindingname_data_block}
 
 <table class="data">
   <thead>
@@ -1056,27 +1058,27 @@ These `[selector-string]` keys must consist of a string of ASCII letters, digits
     <tr>
       <td>`note`</td>
       <td>non-empty string</td>
-      <td>A human-readable description of what the selector set represents. This is informational only.</td>
+      <td>A human-readable description of what the binding represents. This is informational only.</td>
       <td>optional</td>
     </tr>
   </tbody>
 </table>
 
-> TODO: Maybe we could also add an option for a `class` key (with an array of strings as the value), so all selectors sets with a certain class can be addressed by target selectors?
+> TODO: Maybe we could also add an option for a `class` key (with an array of strings as the value), so all bindings with a certain class can be addressed by target selectors?
 
 
-<div id='xmp_selector_syntax' class='example'>
-An example of a `selectors` block with three selector set object entries. 
+<div id='xmp_binding_syntax' class='example'>
+An example of a `bindings` block with three bindings. 
 
-The first selector set object selects an element with the `id="chart-title"` as the target element, and associates that with the object key for the title of the first dataset in the JSON.
+The first binding selects an element with the `id="chart-title"` as the target element, and associates that with the object key for the title of the first dataset in the JSON.
 
-The second selector set object selects an element with a complex DOM selector for an element without an `id` attribute as the target element, and associates that with the object key for a label of a record in the dataset of the JSON.
+The second binding selects an element with a complex DOM selector for an element without an `id` attribute as the target element, and associates that with the object key for a label of a record in the dataset of the JSON.
 
-The third selector set object selects an element with `id="datapoint-Sunday_2000"` as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard. 
+The third binding selects an element with `id="datapoint-Sunday_2000"` as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard. 
 
 <xmp highlight='json'>
 {
-  "selectors": {
+  "bindings": {
     "title": {
       "dom": "#chart-title",
       "json": "$.datasets[0].title"
@@ -1095,18 +1097,18 @@ The third selector set object selects an element with `id="datapoint-Sunday_2000
 </xmp>
 </div>
 
-<div id='xmp_selector_alternate_syntax' class='example'>
-An example of a `selectors` block with two selector set object entries with alternate syntaxes for the same kind of connection. 
+<div id='xmp_binding_alternate_syntax' class='example'>
+An example of a `bindings` block with two bindings with alternate syntaxes for the same kind of connection. 
 
-The first selector set object selects an element with the `id="datapoint-Sunday_2000"` as the target element, and associates that with the object key for the `x` and `y` values of a record in the dataset of the JSON, using an array of JSONPath selectors. 
+The first binding selects an element with the `id="datapoint-Sunday_2000"` as the target element, and associates that with the object key for the `x` and `y` values of a record in the dataset of the JSON, using an array of JSONPath selectors. 
 
-The second selector set object selects an element with `id="datapoint-Monday_2000"` as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.
+The second binding selects an element with `id="datapoint-Monday_2000"` as the target element, and associates that with the object key for all of the values of a record in the dataset of the JSON, using a wildcard.
 
-Assuming a record structure with only `x` and `y` keys, these selectors would yield the same outcome, making the wildcard selector a shorthand for the array syntax.
+Assuming a record structure with only `x` and `y` keys, these bindings would yield the same outcome, making the wildcard selector a shorthand for the array syntax.
 
 <xmp highlight='json'>
 {
-  "selectors": {
+  "bindings": {
     "dp0": {
       "dom": "#datapoint-Sunday_2000",
       "json": [
@@ -1123,20 +1125,20 @@ Assuming a record structure with only `x` and `y` keys, these selectors would yi
 </xmp>
 </div>
 
-> TODO: provide examples of one-to-many,  many-to-one, and  many-to-many selector sets.
+> TODO: provide examples of one-to-many,  many-to-one, and  many-to-many bindings.
 
 
-#### `[selector-string]` as target selector #### {#selectorstring_target_selector}
+#### Bindings as targets #### {#binding_target}
 
-The JSONPath for any given `[selector-string]` key can be used as the value of a behavior [target selector](#targets).
+The JSONPath for any given binding can be used as the value of a behavior [target selector](#targets).
 
 
-<div id='xmp_selector_behavior' class='example'>
-An example of a `selector` block with one selector set object entry, and a `behaviors` block with an entry referencing that selector set by its JSONPath.
+<div id='xmp_binding_behavior' class='example'>
+An example of a `bindings` block with one binding, and a `behaviors` block with an entry referencing that binding by its JSONPath.
 
 <xmp highlight='json'>
 {
-  "selectors": {
+  "bindings": {
     "dp5": {
       "dom": "#datapoint-Thursday_2000",
       "json": "$.datasets[0].series[0].records[4].*"
@@ -1145,7 +1147,7 @@ An example of a `selector` block with one selector set object entry, and a `beha
   "behaviors": [
     {
       "target": {
-        "selector": "$.selectors.dp5"
+        "selector": "$.bindings.dp5"
       },
       "enter": {
         {
@@ -1166,9 +1168,9 @@ An example of a `selector` block with one selector set object entry, and a `beha
 
 If a dataset is fairly small, it is best to include it in the image file directly.
 
-#### Linking data and representational elements #### {#linking_data}
+#### Tying data and representational elements #### {#tying_data}
 
-Each data point in the raw data `may` be represented visually in the image. There are multiple benefits in providing a mechanism to link a data point in the dataset to its representation, such as enabling users to drill down into the raw data value for a data element, or selecting a label in a different language than the graphical text label.
+Each data point in the raw data `may` be represented visually in the image. There are multiple benefits in providing a mechanism to tie a data point in the dataset to its representation, such as enabling users to drill down into the raw data value for a data element, or selecting a label in a different language than the graphical text label.
 
 This specification defines a `selector` attribute to enable this relationship between a graphical element and the data point it represents.
 
@@ -1223,7 +1225,7 @@ An `href` key `may` be included at any level of the metadata, with the relevant 
 {
   "href": {
     "datasets": "https://path.to.datasets",
-    "selectors": "https://path.to.selectors",
+    "bindings": "https://path.to.bindings",
     "behaviors": "https://path.to.behaviors",
     "provenance": "https://path.to.provenance",
     "tags": "https://path.to.tags",
@@ -1248,7 +1250,7 @@ A `behaviors` block is an array with the key `behaviors`, which contains one or 
 
 ### Behavior and conforming generators ### {#behavior_generators}
 
-A generator conforming to this specification is not required to add behaviors to graphics, only a dataset and selectors.
+A generator conforming to this specification is not required to add behaviors to graphics, only a dataset and bindings.
 
 Note: While this specification does not define best practices for different behaviors for different classes of user agent and graphics, a companion best practices document is under development. A conforming generator might be much more useful if it also follows that guidance and generates graphic documents with behaviors optimized for the target user agent capabilities.
 
@@ -1556,13 +1558,13 @@ A target is an area of an diagram image that is associated with a particular beh
 
 Targets may consist of one of three possible values:
 
-1. **An element link**: a selector indicating a specific element or set of elements in the DOM of a SVG file;
-2. **An JSONPath link**: a selector indicating a specific selector set in the JIM of a SVG file;
+1. **An element selector**: a CSS selector indicating a specific element or set of elements in the DOM of a SVG file;
+2. **A binding selector**: a JSONPath selector indicating a specific binding in the JIM of a SVG file;
 3. **A** `shapes` **array**: an array of objects that defines a shape to be dynamically represented in the diagram file.
 
 ## Target `selector` key ## {#target_selector_key}
 
-A target may consist of a `selector` key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a selector set. 
+A target may consist of a `selector` key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding. 
 
 ### Target `selector` for elements ### {#target_element_selector}
 
@@ -1607,19 +1609,19 @@ A target selector targeting all elements in the container element `graph_area`.
 </div>
 
 
-### Target `selector` for selector sets ### {#target_selector_set_selector}
+### Target `selector` for bindings ### {#target_binding_selector}
 
-A selector set target may be a JSONPath selector pointing to a selector set, or an array of such JSONPath selectors.
+A binding target may be a JSONPath selector pointing to a binding, or an array of such JSONPath selectors.
 
 > TODO: Expand on this.
 
 
-<div id='xmp_selector_set_selector' class='example'>
-An example of a `target` block with a `selector` key which has a JSONPath selector addressing a labeled selector set.
+<div id='xmp_target_binding_selector' class='example'>
+An example of a `target` block with a `selector` key which has a JSONPath selector addressing a named binding.
 
 <xmp highlight='json'>
 {
-  "selectors": {
+  "bindings": {
     "dp5": {
       "dom": "#datapoint-Thursday_2000",
       "json": "$.datasets[0].series[0].records[4].*"
@@ -1628,7 +1630,7 @@ An example of a `target` block with a `selector` key which has a JSONPath select
   "behaviors": [
     {
       "target": {
-        "selector": "$.selectors.dp5"
+        "selector": "$.bindings.dp5"
       }
     }
   ]
@@ -1802,7 +1804,7 @@ A conforming user agent may allow a user to change the default announcement cont
 
 
 <div id='xmp_implicit_announcement' class='example'>
-An example of a default implicit announcment based on a `selectors` block. 
+An example of a default implicit announcment based on a `bindings` block. 
 
 In this example, when the user moves the pointer over the SVG element with the `id` of `datapoint-Sunday_2000`, the conforming JIM viewer would announce, "2000, Sunday, 57".
 
@@ -1827,7 +1829,7 @@ In this example, when the user moves the pointer over the SVG element with the `
       ]
     }
   ],
-  "selectors": {
+  "bindings": {
     "Sunday_2000": {
       "dom": "#datapoint-Sunday_2000",
       "json": [
@@ -1908,7 +1910,7 @@ The <b>announcement name</b> is normally short, 1-3 words, and serves two primar
 
 A document conforming to this specification must define an <b>announcement name</b> for all visual elements that convey meaning, unless that element is deliberately excluded (such as to remove redundancy or simplify a graphic).
 
-As noted in the [implicit announcements section](#implicit_announcements), the default announcement name for a meaningful element is defined by the selector structure, and can be overridden in an explicit `announcement` block.
+As noted in the [implicit announcements section](#implicit_announcements), the default announcement name for a meaningful element is defined by the binding, and can be overridden in an explicit `announcement` block.
 
 <xmp highlight='json'>
 {
@@ -1957,9 +1959,9 @@ The <b>announcement hint</b> is a text passage (ideally short) that provides ins
 ## Complete announcement example ## {#complete_announcement_example}
 
 <div id='xmp_explicit_announcement' class='example'>
-An example of a default explicit announcment based on a `selectors` block. 
+An example of a default explicit announcment based on a `bindings` block. 
 
-An example of a `selector` block with one selector set object entry, a `behaviors` block with an entry referencing that selector set by its JSONPath, an `announcement` block, and a `haptic` block triggered on an `enter` event.
+An example of a `bindings` block with one binding, a `behaviors` block with an entry referencing that binding by its JSONPath, an `announcement` block, and a `haptic` block triggered on an `enter` event.
 
 In this example, when the user moves the pointer over the SVG element with the `id` of `datapoint-Sunday_2000`, the conforming JIM viewer might announce, "2000, Sunday: $57", and play the haptic feedback. If the user requested more information (e.g., with a double-tap, long tap, or simply waiting, depending on the viewer UI), the viewer would announce "This is an increase of $8 over the previous value".
 
@@ -1984,7 +1986,7 @@ In this example, when the user moves the pointer over the SVG element with the `
       ]
     }
   ],
-  "selectors": {
+  "bindings": {
     "Sunday_2000": {
       "dom": "#datapoint-Sunday_2000",
       "json": [
@@ -1995,7 +1997,7 @@ In this example, when the user moves the pointer over the SVG element with the `
     "behaviors": [
       {
         "target": {
-          "selector": "$.selectors.Sunday_2000"
+          "selector": "$.bindings.Sunday_2000"
         },
         "announcement": {
           "name": "Sunday, 2000: $57",
@@ -2330,7 +2332,7 @@ Note: A JIM view is similar to, but more expansive than, an SVG `<view>` element
     <tr>
       <td>`viewport`</td>
       <td>object</td>
-      <td>An object defining the `x`, `y`, `width`, and `height` of the viewport</td>
+      <td>An object defining the `x`, `y`, `width`, and `height` of the viewport;  `x`, `y`, `width`, and `height` have the `number` datatype, and are the user units as defined in the SVG specification.</td>
       <td>optional</td>
     </tr>
     <tr>
@@ -2349,7 +2351,7 @@ Note: A JIM view is similar to, but more expansive than, an SVG `<view>` element
     <tr>
       <td>`note`</td>
       <td>non-empty string</td>
-      <td>A human-readable description of what the selector set represents. This is informational only.</td>
+      <td>A human-readable description of what the binding represents. This is informational only.</td>
       <td>optional</td>
     </tr>
     -->
@@ -2363,10 +2365,10 @@ Note: A JIM view is similar to, but more expansive than, an SVG `<view>` element
       "name": "North Carolina",
       "description": "The US state of North Carolina, with counties and major cities",
       "viewport": {
-        "x": "279",
-        "y": "90",
-        "width": "60",
-        "height": "80"
+        "x": 279,
+        "y": 90,
+        "width": 60,
+        "height": 80
       },
       "styles": {
         ".county": {
@@ -2387,16 +2389,6 @@ Note: A JIM view is similar to, but more expansive than, an SVG `<view>` element
 
 
 
-<!--
-### The `selectors` block data ### {#selectors_block}
-
-The `selectors` block is an object containing named sets of selectors.  
-
-The `selectors` object contains one or more `[selector-string]` keys. A `[selector-string]` key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the selector set (e.g. `"title"`, `"bar-3"`, or `"axis_labels"`). Each `[selector-string]` is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the selector set.
-
-These `[selector-string]` keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each `[selector-string]` key must be a unique value.
-
--->
 
 
 
@@ -2457,7 +2449,7 @@ TODO: Define and describe mechanisms for setting layers on objects (e.g. print o
 
 ## Object Search Capabilities ## {#object_search_capabilities}
 
-For touch screen and similar devices, by way of aiding the user's orientation withi a graphic document, a conforming JIM viewer should provide a means to guide an end user to any target object (that is, any object with a selector, accessible name, or text content) in the graphic document. 
+For touch screen and similar devices, by way of aiding the user's orientation withi a graphic document, a conforming JIM viewer should provide a means to guide an end user to any target object (that is, any object with a binding or target selector, accessible name, or text content) in the graphic document. 
 
 The means that the conforming JIM viewer uses to guide the user may vary. At the minimum, the viewer should allow the end user to chose any target object from a list of all available target objects, and provide verbal, auditory, or haptic cues that guides the end user from their current pointer position to the chosen target object. 
 
@@ -2495,7 +2487,7 @@ This specification attempts to define its rules in a way that CSS might be expre
 
 ### CSS selectors ### {#css_selectors}
 
-This specification uses the CSS selector syntax to link specific metadata entries to specific markup elements, to classes on markup elements, or other linking mechanisms. Unlike CSS, however, it does not use selectors as an "object key", but rather as a value for a `selector` attribute, to fit the JSON schema and allow multiple rules to use the same selector.
+This specification uses the CSS selector syntax to tie specific metadata entries to specific markup elements, to classes on markup elements, or other markup hooks. Unlike CSS, however, it does not use selectors as an "object key", but rather as a value for a `selector` attribute, to fit the JSON schema and allow multiple rules to use the same selector.
 
 ### Intended authoring usage ### {#intended_authoring}
 
