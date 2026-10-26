@@ -11,7 +11,6 @@ Editor: Simon Varey, Fizz Studio https://fizz.studio, simon@fizz.studio
 Editor: Dan Gardner, ViewPlus Technologies https://www.viewplus.com, dan.gardner@viewplus.com
 Editor: Jeff Croxell, ViTAL Education https://vital.education, jeff.croxell@vital.education
 Abstract: A specification for expressing technical image metadata, with an emphasis on accessibility of data visualizations.
-Favicon: ./favicon.svg
 Complain About: accidental-2119 yes, missing-example-ids yes
 Markup Shorthands: markdown yes, markdown-blockquotes yes, css no
 </pre>
@@ -988,10 +987,84 @@ TODO: describe the `items` object
 
 #### The `source` key #### {#source_data_block}
 
-The provenance of the dataset.
+The `source` key defines an object citing where the dataset's data came from. It records the origin of the data, not the authorship of the graphic, which is recorded in the document's [provenance chain](#provenance_chain).
 
-TODO: describe the `source` object
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`producer`</td>
+      <td>non-empty string</td>
+      <td>The organization or person that produced the data</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`title`</td>
+      <td>non-empty string</td>
+      <td>The title of the source data product</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`url`</td>
+      <td>string</td>
+      <td>A URI of the main page describing the source data</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`citation`</td>
+      <td>non-empty string</td>
+      <td>A full citation of the source, following the producer's citation guidance where available</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`datePublished`</td>
+      <td>date string</td>
+      <td>When the source data was published, as an [[RFC3339]] `full-date`, or a year (`YYYY`) or year and month (`YYYY-MM`)</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`dateAccessed`</td>
+      <td>date string</td>
+      <td>When the data was retrieved from the source, as an [[RFC3339]] `full-date`</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`license`</td>
+      <td>object</td>
+      <td>The license of the source data, with a `name` (non-empty string, required) and a `url` (string, optional)</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
 
+
+<div id='xmp_dataset_source' class='example'>
+An example of a `source` object citing a government data product.
+
+<xmp highlight='json'>
+{
+  "source": {
+    "producer": "NOAA National Centers for Environmental Information",
+    "title": "Global Surface Temperature Anomalies",
+    "url": "https://www.ncei.noaa.gov/access/monitoring/global-temperature-anomalies",
+    "citation": "NOAA NCEI (2026). Global Surface Temperature Anomalies.",
+    "datePublished": "2026-03",
+    "dateAccessed": "2026-10-20",
+    "license": {
+      "name": "Public domain",
+      "url": "https://www.usa.gov/government-copyright"
+    }
+  }
+}
+</xmp>
+</div>
 
 ### The `href` key in a `datasets` block ### {#href_data_block}
 
@@ -1400,9 +1473,11 @@ Details on the syntax of an `sonification` block are defined in the [Sonificatio
 
 
 
-## Provenance ## {#provenance}
+## Document Provenance ## {#document_provenance}
 
 Provenance describes where a document came from. This includes entries such as authors, organizations, date and time created or modified, where it was first published, the title of the paper or article it supplemented, or the original work on which it was based.
+
+Note: Document provenance is distinct from the provenance of an individual dataset, which is specified in the `dataset` [`source` data block](#source_data_block).
 
 A `provenance` block is an object with the key `provenance`.
 
@@ -1438,7 +1513,7 @@ Each item should be a quoted non-empty string separated by a comma.
 
 The `chain` key defines an ordered array expressing the provenance chain of the document: the sequence of parties who authored, published, or adapted the work over time. It preserves credit to the original author or publisher as content is adapted and shared.
 
-Each item in the `chain` array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative; the optional `date` key is descriptive and is not used to order the chain.
+Each item in the `chain` array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative. When `date` is present on two or more items, their dates must not decrease in array order. Validators and consumers should warn when they do.
 
 Each item must include at least one of the `name` or `organization` keys. All other keys are optional.
 
@@ -1477,7 +1552,7 @@ Each item must include at least one of the `name` or `organization` keys. All ot
       <td>optional</td>
     </tr>
     <tr>
-      <td>`href`</td>
+      <td>`url`</td>
       <td>string</td>
       <td>A URI locating the source document or work for this authored state</td>
       <td>optional</td>
@@ -1565,7 +1640,7 @@ The term `software` is used in preference to "generator", which this specificati
         "role": "adapter",
         "name": "Alex Chen",
         "title": "Quarterly Sales (tactile edition)",
-        "href": "https://example.org/works/q-sales-tactile.svg",
+        "url": "https://example.org/works/q-sales-tactile.svg",
         "date": "2026-08-25T09:00:00Z"
       }
     ]
@@ -1575,7 +1650,7 @@ The term `software` is used in preference to "generator", which this specificati
 
 Note: In the example above, the first item omits `role` and defaults to `author`; the second sets `role` to `adapter` explicitly. Set `role` to record other relationships, such as `"role": "publisher"`.
 
-Note: Identifiers meaningful only within a single platform, such as internal database keys, should be carried in the `extensions` block rather than in `chain`, so the provenance chain remains portable between implementations.
+Note: Identifiers meaningful only within a single platform, such as internal database keys, <span class="allow-2119">should</span> be included in the `extensions` block rather than in `chain`, so the provenance chain remains portable between implementations.
 
 ## Tags ## {#tags}
 
@@ -2686,6 +2761,8 @@ By defining a set of declarative syntaxes for different assistive technologies, 
 ## Privacy ## {#privacy}
 
 By enabling security through declarative behaviors, this specification ensures the privacy of the user from third parties. Note that data collection might still be performed through some primary user agents and content providers, but this should be done only with the user's consent.
+
+Provenance chain items can name individual people, and those names travel with the document wherever it is shared. Authors should obtain consent before naming individuals, or credit an `organization` alone.
 
 ## Portability ## {#portability}
 

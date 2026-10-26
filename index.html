@@ -1490,8 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
-  <link href="./favicon.svg" rel="icon">
-  <meta content="d307e637f9cc0176d5c63ec27e5b39eb396d7bb1" name="revision">
+  <meta content="9b71222bb7feed192ed50a4a49bc0a6a9096f40d" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2048,7 +2047,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p data-fill-with="logo"></p>
    <h1 class="no-ref p-name" id="title">JSON Image Metadata</h1>
    <h2 class="heading no-num no-ref no-toc settled" id="profile-and-date"><span class="content">Living Document,
-    <time class="dt-updated" datetime="2026-10-22">22 October 2026</time></span></h2>
+    <time class="dt-updated" datetime="2026-10-26">26 October 2026</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2068,7 +2067,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" height="15" src="https://licensebuttons.net/p/zero/1.0/80x15.png" width="80"></a>
 To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 22 October 2026,
+In addition, as of 26 October 2026,
 the editors have made this specification available under the
 <a href="https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0.
@@ -2215,9 +2214,15 @@ Parts of this work may be from another specification document.  If so, those par
          </ol>
        </ol>
       <li>
-       <a href="#provenance"><span class="secno">4.5</span> <span class="content">Provenance</span></a>
+       <a href="#document_provenance"><span class="secno">4.5</span> <span class="content">Document Provenance</span></a>
        <ol class="toc">
         <li><a href="#notes"><span class="secno">4.5.1</span> <span class="content">Notes</span></a>
+        <li>
+         <a href="#provenance_chain"><span class="secno">4.5.2</span> <span class="content">Provenance chain</span></a>
+         <ol class="toc">
+          <li><a href="#provenance_role"><span class="secno">4.5.2.1</span> <span class="content">The <code>role</code> key</span></a>
+          <li><a href="#provenance_software"><span class="secno">4.5.2.2</span> <span class="content">The <code>software</code> key</span></a>
+         </ol>
        </ol>
       <li>
        <a href="#tags"><span class="secno">4.6</span> <span class="content">Tags</span></a>
@@ -3038,8 +3043,72 @@ An example of a <code>facets</code> block with two <code>[facet-string]</code> o
    <p>A loosely organized collection of items for unstructured data, such as labels, values, and descriptions for diagrams.</p>
    <p>TODO: describe the <code>items</code> object</p>
    <h5 class="heading settled" data-level="4.1.9.4" id="source_data_block"><span class="secno">4.1.9.4. </span><span class="content">The <code>source</code> key</span><a class="self-link" href="#source_data_block"></a></h5>
-   <p>The provenance of the dataset.</p>
-   <p>TODO: describe the <code>source</code> object</p>
+   <p>The <code>source</code> key defines an object citing where the dataset’s data came from. It records the origin of the data, not the authorship of the graphic, which is recorded in the document’s <a href="#provenance_chain">provenance chain</a>.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>producer</code>
+      <td>non-empty string
+      <td>The organization or person that produced the data
+      <td>required
+     <tr>
+      <td><code>title</code>
+      <td>non-empty string
+      <td>The title of the source data product
+      <td>optional
+     <tr>
+      <td><code>url</code>
+      <td>string
+      <td>A URI of the main page describing the source data
+      <td>optional
+     <tr>
+      <td><code>citation</code>
+      <td>non-empty string
+      <td>A full citation of the source, following the producer’s citation guidance where available
+      <td>optional
+     <tr>
+      <td><code>datePublished</code>
+      <td>date string
+      <td>When the source data was published, as an <a data-link-type="biblio" href="#biblio-rfc3339" title="Date and Time on the Internet: Timestamps">[RFC3339]</a> <code>full-date</code>, or a year (<code>YYYY</code>) or year and month (<code>YYYY-MM</code>)
+      <td>optional
+     <tr>
+      <td><code>dateAccessed</code>
+      <td>date string
+      <td>When the data was retrieved from the source, as an <a data-link-type="biblio" href="#biblio-rfc3339" title="Date and Time on the Internet: Timestamps">[RFC3339]</a> <code>full-date</code>
+      <td>optional
+     <tr>
+      <td><code>license</code>
+      <td>object
+      <td>The license of the source data, with a <code>name</code> (non-empty string, required) and a <code>url</code> (string, optional)
+      <td>optional
+   </table>
+   <div class="example" id="xmp_dataset_source">
+    <a class="self-link" href="#xmp_dataset_source"></a>
+An example of a <code>source</code> object citing a government data product.
+
+
+<pre class="highlight"><c- p>{</c->
+  <c- f>"source"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"producer"</c-><c- p>:</c-> <c- u>"NOAA National Centers for Environmental Information"</c-><c- p>,</c->
+    <c- f>"title"</c-><c- p>:</c-> <c- u>"Global Surface Temperature Anomalies"</c-><c- p>,</c->
+    <c- f>"url"</c-><c- p>:</c-> <c- u>"https://www.ncei.noaa.gov/access/monitoring/global-temperature-anomalies"</c-><c- p>,</c->
+    <c- f>"citation"</c-><c- p>:</c-> <c- u>"NOAA NCEI (2026). Global Surface Temperature Anomalies."</c-><c- p>,</c->
+    <c- f>"datePublished"</c-><c- p>:</c-> <c- u>"2026-03"</c-><c- p>,</c->
+    <c- f>"dateAccessed"</c-><c- p>:</c-> <c- u>"2026-10-20"</c-><c- p>,</c->
+    <c- f>"license"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"name"</c-><c- p>:</c-> <c- u>"Public domain"</c-><c- p>,</c->
+      <c- f>"url"</c-><c- p>:</c-> <c- u>"https://www.usa.gov/government-copyright"</c->
+    <c- p>}</c->
+  <c- p>}</c->
+<c- p>}</c->
+</pre>
+   </div>
    <h4 class="heading settled" data-level="4.1.10" id="href_data_block"><span class="secno">4.1.10. </span><span class="content">The <code>href</code> key in a <code>datasets</code> block</span><a class="self-link" href="#href_data_block"></a></h4>
    <p>The <code>href</code> key defines an object that refers to an external data file. The content model and processing of the <code>href</code> key are different in the <code>datasets</code> block than in other metadata blocks.</p>
    <p>This external file can be used to tie data to graphical elements, as defined in <a href="#inline_data">Inline data</a>.</p>
@@ -3326,8 +3395,9 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
    <div class="todo">
 <b>TODO:</b> Reference and expand on CSS prefers-dark-mode media query.
 </div>
-   <h3 class="heading settled" data-level="4.5" id="provenance"><span class="secno">4.5. </span><span class="content">Provenance</span><a class="self-link" href="#provenance"></a></h3>
+   <h3 class="heading settled" data-level="4.5" id="document_provenance"><span class="secno">4.5. </span><span class="content">Document Provenance</span><a class="self-link" href="#document_provenance"></a></h3>
    <p>Provenance describes where a document came from. This includes entries such as authors, organizations, date and time created or modified, where it was first published, the title of the paper or article it supplemented, or the original work on which it was based.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Document provenance is distinct from the provenance of an individual dataset, which is specified in the <code>dataset</code> <a href="#source_data_block"><code>source</code> data block</a>.</p>
    <p>A <code>provenance</code> block is an object with the key <code>provenance</code>.</p>
 <pre class="highlight"><c- p>{</c->
   <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
@@ -3350,6 +3420,122 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
   <c- p>}</c->
 <c- p>}</c->  
 </pre>
+   <h4 class="heading settled" data-level="4.5.2" id="provenance_chain"><span class="secno">4.5.2. </span><span class="content">Provenance chain</span><a class="self-link" href="#provenance_chain"></a></h4>
+   <p>The <code>chain</code> key defines an ordered array expressing the provenance chain of the document: the sequence of parties who authored, published, or adapted the work over time. It preserves credit to the original author or publisher as content is adapted and shared.</p>
+   <p>Each item in the <code>chain</code> array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative. When <code>date</code> is present on two or more items, their dates must not decrease in array order. Validators and consumers should warn when they do.</p>
+   <p>Each item must include at least one of the <code>name</code> or <code>organization</code> keys. All other keys are optional.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>role</code>
+      <td>token
+      <td>The party’s relationship to this authored state, such as <code>author</code>, <code>publisher</code>, or <code>adapter</code>
+      <td>optional
+     <tr>
+      <td><code>name</code>
+      <td>non-empty string
+      <td>The name of the person credited for this state
+      <td>required if <code>organization</code> is absent
+     <tr>
+      <td><code>organization</code>
+      <td>non-empty string
+      <td>The name of the organization credited for this state
+      <td>required if <code>name</code> is absent
+     <tr>
+      <td><code>title</code>
+      <td>non-empty string
+      <td>The title of the work at this authored state
+      <td>optional
+     <tr>
+      <td><code>url</code>
+      <td>string
+      <td>A URI locating the source document or work for this authored state
+      <td>optional
+     <tr>
+      <td><code>date</code>
+      <td>date-time string
+      <td>The date and time this state was created or modified, as an <a data-link-type="biblio" href="#biblio-rfc3339" title="Date and Time on the Internet: Timestamps">[RFC3339]</a> <code>date-time</code>
+      <td>optional
+     <tr>
+      <td><code>software</code>
+      <td>object
+      <td>The tool that produced this authored state, if any
+      <td>optional
+   </table>
+   <h5 class="heading settled" data-level="4.5.2.1" id="provenance_role"><span class="secno">4.5.2.1. </span><span class="content">The <code>role</code> key</span><a class="self-link" href="#provenance_role"></a></h5>
+   <p>The <code>role</code> key denotes the relationship of the party to the authored state it describes. When <code>role</code> is absent, the item’s role is <code>author</code> if it is the first item in the <code>chain</code>, and <code>adapter</code> otherwise. An item should set <code>role</code> explicitly when this default does not apply — for example, when the origin of the work is a <code>publisher</code>, when a party is an <code>editor</code>, or when the origin has multiple co-authors.</p>
+   <p>The value should be one of the following tokens:</p>
+   <ul>
+    <li data-md>
+     <p><code>author</code>: the original creator of the work.</p>
+    <li data-md>
+     <p><code>publisher</code>: a party that published or distributed the work.</p>
+    <li data-md>
+     <p><code>adapter</code>: a party that adapted, remixed, or modified the work for a particular need.</p>
+    <li data-md>
+     <p><code>editor</code>: a party that revised the work without altering its essential content.</p>
+    <li data-md>
+     <p><code>contributor</code>: any other contributing party.</p>
+   </ul>
+   <p>Implementations may define additional <code>role</code> tokens for cases not covered by this list. Consumers that do not recognize a <code>role</code> token should treat the entry as a <code>contributor</code>.</p>
+   <h5 class="heading settled" data-level="4.5.2.2" id="provenance_software"><span class="secno">4.5.2.2. </span><span class="content">The <code>software</code> key</span><a class="self-link" href="#provenance_software"></a></h5>
+   <p>The <code>software</code> key denotes an object identifying the tool that produced the authored state, such as a chart generator, an authoring application, or an automated service. The <code>software</code> object records the instrument used; the crediting party remains the <code>name</code> or <code>organization</code> of the containing item.</p>
+   <p>The term <code>software</code> is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see <a href="#conform_imp">§ 2.4 Conforming implementation</a>).</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>name</code>
+      <td>non-empty string
+      <td>The name of the tool
+      <td>required
+     <tr>
+      <td><code>version</code>
+      <td>non-empty string
+      <td>The version of the tool that produced this state
+      <td>optional
+     <tr>
+      <td><code>organization</code>
+      <td>non-empty string
+      <td>The vendor or organization that produces the tool
+      <td>optional
+   </table>
+<pre class="highlight"><c- p>{</c->
+  <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"chain"</c-><c- p>:</c-> <c- p>[</c->
+      <c- p>{</c->
+        <c- f>"name"</c-><c- p>:</c-> <c- u>"Jamie Rivera"</c-><c- p>,</c->
+        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-24T14:30:00Z"</c-><c- p>,</c->
+        <c- f>"software"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"name"</c-><c- p>:</c-> <c- u>"ParaCharts"</c-><c- p>,</c->
+          <c- f>"version"</c-><c- p>:</c-> <c- u>"2.3.1"</c-><c- p>,</c->
+          <c- f>"organization"</c-><c- p>:</c-> <c- u>"Fizz Studio"</c->
+        <c- p>}</c->
+      <c- p>},</c->
+      <c- p>{</c->
+        <c- f>"role"</c-><c- p>:</c-> <c- u>"adapter"</c-><c- p>,</c->
+        <c- f>"name"</c-><c- p>:</c-> <c- u>"Alex Chen"</c-><c- p>,</c->
+        <c- f>"title"</c-><c- p>:</c-> <c- u>"Quarterly Sales (tactile edition)"</c-><c- p>,</c->
+        <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/works/q-sales-tactile.svg"</c-><c- p>,</c->
+        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-25T09:00:00Z"</c->
+      <c- p>}</c->
+    <c- p>]</c->
+  <c- p>}</c->
+<c- p>}</c->
+</pre>
+   <p class="note" role="note"><span class="marker">Note:</span> In the example above, the first item omits <code>role</code> and defaults to <code>author</code>; the second sets <code>role</code> to <code>adapter</code> explicitly. Set <code>role</code> to record other relationships, such as <code>"role": "publisher"</code>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Identifiers meaningful only within a single platform, such as internal database keys, <span class="allow-2119">should</span> be included in the <code>extensions</code> block rather than in <code>chain</code>, so the provenance chain remains portable between implementations.</p>
    <h3 class="heading settled" data-level="4.6" id="tags"><span class="secno">4.6. </span><span class="content">Tags</span><a class="self-link" href="#tags"></a></h3>
    <p>Tags are a way to categorize the file, either by the content, by the capabilities, or by a rating system, or some combination thereof.</p>
    <p>Tags are used to aid in filtering and searching for content.</p>
@@ -4179,6 +4365,7 @@ A blind user might wish to enable haptics and braille output when they are in a 
    <p>By defining a set of declarative syntaxes for different assistive technologies, including parameters and conditional execution triggers, this specification enables the user agent to provide the interactivity defined by the author, without compromising security. This specification refers to such declarative capabilities as "behaviors".</p>
    <h3 class="heading settled" data-level="13.4" id="privacy"><span class="secno">13.4. </span><span class="content">Privacy</span><a class="self-link" href="#privacy"></a></h3>
    <p>By enabling security through declarative behaviors, this specification ensures the privacy of the user from third parties. Note that data collection might still be performed through some primary user agents and content providers, but this should be done only with the user’s consent.</p>
+   <p>Provenance chain items can name individual people, and those names travel with the document wherever it is shared. Authors should obtain consent before naming individuals, or credit an <code>organization</code> alone.</p>
    <h3 class="heading settled" data-level="13.5" id="portability"><span class="secno">13.5. </span><span class="content">Portability</span><a class="self-link" href="#portability"></a></h3>
    <p>Data visualizations can often lose their association with their context, including the article they were published in or the data they represent. This specification must define a way to include the raw data and the provenance in the image file, so the context can be preserved as the document is shared through various means.</p>
    <h3 class="heading settled" data-level="13.6" id="#reusability"><span class="secno">13.6. </span><span class="content">Reusability</span><a class="self-link" href="#%23reusability"></a></h3>
@@ -4400,6 +4587,8 @@ For example, the following media query expresses that a rule is used on printing
   <dl>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc3339">[RFC3339]
+   <dd>G. Klyne; C. Newman. <a href="https://www.rfc-editor.org/info/rfc3339/"><cite>Date and Time on the Internet: Timestamps</cite></a>. July 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/info/rfc3339/">https://www.rfc-editor.org/info/rfc3339/</a>
   </dl>
   <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Non-Normative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
