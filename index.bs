@@ -2027,6 +2027,14 @@ This example records the creation of a graphic, the addition of JIM metadata, an
 </xmp>
 </div>
 
+### Importing and consolidating provenance #### {#provenance_import}
+
+When a graphic or other resource is incorporated into a JIM document, it may already have provenance information expressed in another format or maintained by an external system. For example, an SVG diagram obtained from Wikimedia Commons may have an existing history of authorship, modifications, attribution, and licensing.
+
+Producers should preserve and re-express available provenance information using the corresponding JIM structures, including activity records, contributors, inputs, licensing terms, and notes. This allows credits and provenance from multiple sources to be consolidated into a common representation that travels with the resulting document.
+
+Imported provenance should distinguish original contributions from subsequent adaptations and additions of JIM metadata. For example, activities from the imported history can have a `scope` of `["graphic"]` and a `url` identifying the source resource, while activities that add JIM metadata have a `scope` of `["jim"]` and identify the imported material in their `inputs`. Producers may summarize or consolidate historical activities when individual records are unavailable or impractical to reproduce, but should preserve known attribution and licensing information. Re-expressing provenance in JIM does not change the licensing obligations associated with the original material or imply independent verification of the imported information.
+
 ### Review and workflow activities ### {#provenance_workflow}
 
 The provenance chain is not limited to activities that create or modify graphic content. It can also record editorial reviews, accessibility evaluations, requests for changes, responses to feedback, approvals, and other steps in a publishing workflow. An activity may record what happened, who was involved, its rationale, and an informal `status`, without defining what a publisher is required to do next.

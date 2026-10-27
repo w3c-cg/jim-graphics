@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
-  <meta content="c4967f6645a6da596e66e6e55d6f9030b878cdbc" name="revision">
+  <meta content="56f14a85f9b719ade721780f8f6a94350b843c07" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2229,7 +2229,8 @@ Parts of this work may be from another specification document.  If so, those par
           <li><a href="#provenance_inputs"><span class="secno">4.5.2.6</span> <span class="content">The <code>inputs</code> key</span></a>
           <li><a href="#provenance_software"><span class="secno">4.5.2.7</span> <span class="content">The <code>software</code> key</span></a>
          </ol>
-        <li><a href="#provenance_workflow"><span class="secno">4.5.3</span> <span class="content">Review and workflow activities</span></a>
+        <li><a href="#provenance_import"><span class="secno">4.5.3</span> <span class="content">Importing and consolidating provenance #</span></a>
+        <li><a href="#provenance_workflow"><span class="secno">4.5.4</span> <span class="content">Review and workflow activities</span></a>
        </ol>
       <li>
        <a href="#tags"><span class="secno">4.6</span> <span class="content">Tags</span></a>
@@ -3426,7 +3427,7 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
    <h3 class="heading settled" data-level="4.5" id="document_provenance"><span class="secno">4.5. </span><span class="content">Provenance and Workflow</span><a class="self-link" href="#document_provenance"></a></h3>
    <p>The <code>provenance</code> block records the origins, development, review, and publication of a graphic and its JIM metadata. It supports both documenting a graphic’s history and managing workflows involving the graphic, its JIM metadata, and associated data.</p>
    <p>The <code>provenance</code> block may contain general <code>notes</code>, such as acknowledgments, sponsorships, and dedications, and a <code>chain</code> of activity records. Activities may create or modify content, or record evaluations, decisions, and other steps that do not change the content. Activity records may identify contributors, software, inputs, resulting documents, licensing terms, status, and other information about what occurred and why.</p>
-   <p>These structured records can support workflow management. Authoring tools, publishing platforms, and other systems can use them to coordinate work, track progress, manage reviews and revisions, record decisions and approvals, and support handoffs between people, organizations, and software. In combination with annotations, activity records can also support workflows involving feedback, requested changes, and their resolution.</p>
+   <p>Authoring tools, publishing platforms, and other systems can use these structured records to coordinate work, track progress, manage reviews and revisions, record decisions and approvals, and support handoffs between people, organizations, and software. In combination with annotations, activity records can also support workflows involving feedback, requested changes, and their resolution.</p>
    <p>The provenance record provides a lightweight, document-internal history that travels with the document. It need not be complete or independently verified. JIM does not prescribe particular workflows or provide authoritative version control, rights management, license validation, workflow enforcement, or verification of contributor identity. External systems may interpret these records, automate workflow operations, and impose additional requirements, but such requirements are outside the scope of JIM conformance.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Document provenance is distinct from the provenance of an individual dataset, which is specified in the <code>dataset</code> <a href="#source_data_block"><code>source</code> data block</a>.</p>
    <p>A <code>provenance</code> block is an object with the key <code>provenance</code>.</p>
@@ -3838,10 +3839,14 @@ This example records the creation of a graphic, the addition of JIM metadata, an
 <c- p>}</c->
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.5.3" id="provenance_workflow"><span class="secno">4.5.3. </span><span class="content">Review and workflow activities</span><a class="self-link" href="#provenance_workflow"></a></h4>
+   <h4 class="heading settled" data-level="4.5.3" id="provenance_import"><span class="secno">4.5.3. </span><span class="content">Importing and consolidating provenance #</span><a class="self-link" href="#provenance_import"></a></h4>
+   <p>When a graphic or other resource is incorporated into a JIM document, it may already have provenance information expressed in another format or maintained by an external system. For example, an SVG diagram obtained from Wikimedia Commons may have an existing history of authorship, modifications, attribution, and licensing.</p>
+   <p>Producers should preserve and re-express available provenance information using the corresponding JIM structures, including activity records, contributors, inputs, licensing terms, and notes. This allows credits and provenance from multiple sources to be consolidated into a common representation that travels with the resulting document.</p>
+   <p>Imported provenance should distinguish original contributions from subsequent adaptations and additions of JIM metadata. For example, activities from the imported history can have a <code>scope</code> of <code>["graphic"]</code> and a <code>url</code> identifying the source resource, while activities that add JIM metadata have a <code>scope</code> of <code>["jim"]</code> and identify the imported material in their <code>inputs</code>. Producers may summarize or consolidate historical activities when individual records are unavailable or impractical to reproduce, but should preserve known attribution and licensing information. Re-expressing provenance in JIM does not change the licensing obligations associated with the original material or imply independent verification of the imported information.</p>
+   <h4 class="heading settled" data-level="4.5.4" id="provenance_workflow"><span class="secno">4.5.4. </span><span class="content">Review and workflow activities</span><a class="self-link" href="#provenance_workflow"></a></h4>
    <p>The provenance chain is not limited to activities that create or modify graphic content. It can also record editorial reviews, accessibility evaluations, requests for changes, responses to feedback, approvals, and other steps in a publishing workflow. An activity may record what happened, who was involved, its rationale, and an informal <code>status</code>, without defining what a publisher is required to do next.</p>
    <p>This is especially useful in combination with native JIM annotations, which are planned for a forthcoming version of this specification. Annotations will provide a way to associate review comments, suggested changes, and related feedback with a graphic or its constituent elements. The annotations can contain the comments themselves, while provenance entries can record activities such as adding annotations, reviewing the document, addressing feedback, or approving a revision. Native annotation support is not defined in this section.</p>
-   <p>JIM does not define or enforce a review workflow, require specific activity or status values, or determine whether an approval is valid or feedback has been resolved. External publishing and document-management systems may interpret these records and apply their own requirements.</p>
+   <p>JIM does not require particular review activities or status values, or determine whether an approval is valid or feedback has been resolved.</p>
    <h3 class="heading settled" data-level="4.6" id="tags"><span class="secno">4.6. </span><span class="content">Tags</span><a class="self-link" href="#tags"></a></h3>
    <p>Tags are a way to categorize the file, either by the content, by the capabilities, or by a rating system, or some combination thereof.</p>
    <p>Tags are used to aid in filtering and searching for content.</p>
