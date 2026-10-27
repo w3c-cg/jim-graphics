@@ -1501,13 +1501,15 @@ Details on the syntax of an `sonification` block are defined in the [Sonificatio
 </div>
 
 
-## Document Provenance ## {#document_provenance}
+## Provenance and Workflow ## {#document_provenance}
 
-Document provenance records activities associated with the creation, modification, adaptation, annotation, review, and publication of a graphic and its JIM metadata.
+The `provenance` block records the origins, development, review, and publication of a graphic and its JIM metadata. It supports both documenting a graphic's history and managing workflows involving the graphic, its JIM metadata, and associated data.
 
-A `provenance` block may contain general `notes` and a `chain` of activity records. This provides a lightweight, document-internal history that travels with the document.
+The `provenance` block may contain general `notes`, such as acknowledgments, sponsorships, and dedications, and a `chain` of activity records. Activities may create or modify content, or record evaluations, decisions, and other steps that do not change the content. Activity records may identify contributors, software, inputs, resulting documents, licensing terms, status, and other information about what occurred and why.
 
-The provenance record is informational. It need not be complete or independently verified, and it does not provide authoritative version control, rights management, license validation, workflow enforcement, or verification of contributor identity. External systems may use these records and impose additional requirements, but such requirements are outside the scope of JIM conformance.
+Authoring tools, publishing platforms, and other systems can use these structured records to coordinate work, track progress, manage reviews and revisions, record decisions and approvals, and support handoffs between people, organizations, and software. In combination with annotations, activity records can also support workflows involving feedback, requested changes, and their resolution.
+
+The provenance record provides a lightweight, document-internal history that travels with the document. It need not be complete or independently verified. JIM does not prescribe particular workflows or provide authoritative version control, rights management, license validation, workflow enforcement, or verification of contributor identity. External systems may interpret these records, automate workflow operations, and impose additional requirements, but such requirements are outside the scope of JIM conformance.
 
 Note: Document provenance is distinct from the provenance of an individual dataset, which is specified in the `dataset` [`source` data block](#source_data_block).
 
@@ -2031,7 +2033,7 @@ The provenance chain is not limited to activities that create or modify graphic 
 
 This is especially useful in combination with native JIM annotations, which are planned for a forthcoming version of this specification. Annotations will provide a way to associate review comments, suggested changes, and related feedback with a graphic or its constituent elements. The annotations can contain the comments themselves, while provenance entries can record activities such as adding annotations, reviewing the document, addressing feedback, or approving a revision. Native annotation support is not defined in this section.
 
-JIM does not define or enforce a review workflow, require specific activity or status values, or determine whether an approval is valid or feedback has been resolved. External publishing and document-management systems may interpret these records and apply their own requirements.
+JIM does not require particular review activities or status values, or determine whether an approval is valid or feedback has been resolved.
 
 ## Tags ## {#tags}
 
