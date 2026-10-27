@@ -197,7 +197,7 @@ Enveloped form:
 }
 </xmp>
 
-
+For example, a JSONPath selector for the first dataset's first series is `$.datasets[0].series[0]` in the root form, and `$.jim.datasets[0].series[0]` in the enveloped form. Similarly, a selector for a named binding is `$.bindings.dp5` in the root form and `$.jim.bindings.dp5` in the enveloped form. Converting between forms therefore requires updating JSONPath selectors to match the resulting document structure.
 
 
 # JIM block definitions # {#jim_block_defs} 
@@ -358,7 +358,7 @@ These entities include the `title`, `subtitle`, `description`, `representation`,
     </tr>
     <tr>
       <td>`facets`</td>
-      <td>array</td>
+      <td>object</td>
       <td>Details of each facet in the dataset, such as x and y axes or legend keys, for structured and semi-structured data</td>
       <td>optional for unstructured data, required for structured and semi-structured data</td>
     </tr>
@@ -1125,6 +1125,12 @@ The `externalData` key in a `datasets` entry contains an array of objects refere
       <td>The media type of the external data resource</td>
       <td>optional</td>
     </tr>
+    <tr>
+      <td>`description`</td>
+      <td>non-empty string</td>
+      <td>A description of the external resource and its relationship to the inline data, such as an explanation of how values were selected, aggregated, or derived</td>
+      <td>optional</td>
+    </tr>
   </tbody>
 </table>
 
@@ -1220,6 +1226,8 @@ When both `dom` and `shapes` are present, they identify alternative or supplemen
 
 All regions associated with a named binding constitute a single logical binding. Interaction with overlapping regions of the same binding must not cause duplicate behavior execution solely because more than one region was matched.
 
+A conforming JIM viewer must make shape-based bindings available through the same non-pointer navigation and interaction mechanisms it provides for DOM-based bindings. This does not require each shape to be a separate focusable DOM element.
+
 <div id='xmp_binding_raster' class='example'>
 An example of bindings for two bars in an 800 × 600 raster chart. Each binding defines a rectangular interaction region over a bar and associates it with the corresponding inline data record.
 
@@ -1233,8 +1241,7 @@ An example of bindings for two bars in an 800 × 600 raster chart. Each binding 
           "x": 80,
           "y": 200,
           "width": 50,
-          "height": 250,
-          "fill": "transparent"
+          "height": 250
         }
       ],
       "json": "$.datasets[0].series[0].records[0].*"
@@ -1246,8 +1253,7 @@ An example of bindings for two bars in an 800 × 600 raster chart. Each binding 
           "x": 160,
           "y": 150,
           "width": 50,
-          "height": 300,
-          "fill": "transparent"
+          "height": 300
         }
       ],
       "json": "$.datasets[0].series[0].records[1].*"
@@ -1343,10 +1349,8 @@ An example of a `bindings` block with one binding, and a `behaviors` block with 
         "selector": "$.bindings.dp5"
       },
       "enter": {
-        {
-          "haptic": {
-            "durations": [ 50, 100, 150 ]
-          }
+        "haptic": {
+          "durations": [ 50, 100, 150 ]
         }
       }
     }
@@ -1401,7 +1405,7 @@ For large datasets, producers should include the data necessary to represent and
 
 The inline data may consist of a subset of the external dataset, aggregated values, derived values, or a combination of these. It should contain sufficient information to support the graphic's data bindings and intended interactions without requiring retrieval of the external dataset.
 
-The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. Bindings for the current graphic resolve against the inline data, so changes to an external dataset do not silently change the data represented by existing bindings.
+The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. When a graphic contains data bindings, those bindings resolve against data contained in the JIM document, not against resources referenced through `externalData`. Changes to an external dataset therefore do not silently change the data represented by existing bindings.
 
 When inline values are derived from an external dataset, producers should provide sufficient information about the selection, aggregation, or transformation of the source data to explain the relationship between them.
 
@@ -1433,13 +1437,17 @@ diagram.webp.jim.json
 
 When a JIM sidecar is opened in a supporting viewer, the viewer should use this naming convention to locate the associated image in the same directory. If the image cannot be found, the viewer should provide a means for the user to locate it.
 
-This convention allows a sidecar to be opened as the entry point for viewing and interacting with a graphic, without requiring the original image to contain a reference to the JIM metadata.
+When a JIM-capable viewer opens an image that does not contain valid embedded JIM metadata, it should look for an associated sidecar using this filename convention. If a matching, valid sidecar is found, the viewer should use it as the JIM metadata for the image. If the image contains invalid embedded JIM metadata, the viewer should report the error, even if a valid sidecar is available, and may use the sidecar. If the sidecar cannot be found, the viewer should provide a means for the user to locate it.
+
+This convention allows discovery in either direction without requiring the original image to contain a reference to JIM metadata. It does not require viewers to make unsolicited network requests to discover remote sidecars.
 
 Other association mechanisms may be supported, including explicit references, package manifests, or application-defined mechanisms.
 
 ### Sidecar processing ### {#sidecar_processing}
 
 A sidecar contains JIM metadata for its associated graphic and uses the same information model as embedded JIM metadata.
+
+When a graphic has both embedded JIM metadata and an associated sidecar, a JIM viewer should use the embedded metadata when the graphic is opened directly. When a sidecar is opened directly, the viewer must use the metadata contained in that sidecar. A viewer may provide a means to select between embedded and sidecar metadata. The two representations must not be automatically merged.
 
 An external JIM sidecar is not a mechanism for importing or merging individual metadata blocks from another JIM document. Its contents are processed as the JIM metadata associated with the graphic.
 
@@ -2365,7 +2373,7 @@ Target shapes use the coordinate system of the graphic with which they are assoc
 
 For SVG graphics, shape coordinates are expressed in the coordinate system of the root SVG viewport, using its `viewBox` coordinate system when present.
 
-For raster graphics, shape coordinates are expressed relative to the image's intrinsic pixel dimensions, with the origin at the upper-left corner. For example, a shape at coordinates `(100, 100)` in an 800 × 600 image refers to that position in the original image, regardless of its displayed dimensions.
+For raster graphics, shape coordinates are expressed relative to the image's intrinsic pixel dimensions, with the origin at the upper-left corner. Coordinates are interpreted after applying any image orientation metadata, using the dimensions of the correctly oriented image. For example, a shape at coordinates `(100, 100)` in an 800 × 600 image refers to that position in the oriented image, regardless of its displayed dimensions.
 
 When a graphic is scaled, positioned, or cropped, conforming implementations must apply the corresponding transformations to its target shapes so that the defined regions remain aligned with the represented graphical features.
 
@@ -2373,7 +2381,7 @@ Target shapes may be used directly within a behavior's `target` object or within
 
 #### Target shape `fill` and `stroke` #### {#target_shape_fill_stroke}
 
-The `fill` and `stroke` attributes control whether that shape's fill or stroke area of that shape, respectively, must intercept pointer events. If the `fill` attribute is defined, the fill area of the shape must intercept pointer events. If the `stroke` attribute is defined, the stroke area of the shape, with a thickness defined by the `stroke-width` attribute, must intercept pointer events. If neither `fill` nor `stroke` is specified, the fill area of the shape must intercept pointer events by default.
+The `fill` and `stroke` attributes determine which regions of a target shape intercept pointer events. If neither attribute is specified, the fill area must intercept pointer events by default. If only `fill` is specified, only the fill area must intercept pointer events. If only `stroke` is specified, only the stroke area must intercept pointer events, with a thickness defined by `stroke-width`. If both are specified, both areas must intercept pointer events. These hit-detection rules do not require the shapes to be visibly rendered.
 
 If the values of the `fill` or `stroke` attributes are valid color definitions, and a conforming implementation is rendering the overlay shape, the implemention should render that overlay shape with the colors defined.
 
@@ -3005,7 +3013,7 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
 {
   "haptic": {
     "durations": [ 0, 200, 0, 200, 350, 150, 0, 100 ],
-    "intensities": [ 0, .5, 0, 1, 0, 1, 0, .3 ],
+    "intensities": [ 0, 0.5, 0, 1, 0, 1, 0, 0.3 ]
   }
 }
 </xmp>

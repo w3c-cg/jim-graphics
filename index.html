@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
-  <meta content="5c27188192741614f5859c1e50fbd83e8dc9895b" name="revision">
+  <meta content="cd2748fe96325f168459ae86458c8d100071ad3e" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2480,6 +2480,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
   <c- p>}</c->
 <c- p>}</c->
 </pre>
+   <p>For example, a JSONPath selector for the first dataset’s first series is <code>$.datasets[0].series[0]</code> in the root form, and <code>$.jim.datasets[0].series[0]</code> in the enveloped form. Similarly, a selector for a named binding is <code>$.bindings.dp5</code> in the root form and <code>$.jim.bindings.dp5</code> in the enveloped form. Converting between forms therefore requires updating JSONPath selectors to match the resulting document structure.</p>
    <h2 class="heading settled" data-level="4" id="jim_block_defs"><span class="secno">4. </span><span class="content">JIM block definitions</span><a class="self-link" href="#jim_block_defs"></a></h2>
    <div class="note" role="note">
 Note that the examples below are notional, and intended for illustrative purposes. They are not a formal definition. The final definitions will be expressed in JSON Schema <a data-link-type="biblio" href="#biblio-json-schema" title="JSON Schema: A Media Type for Describing JSON Documents">[JSON-Schema]</a>, and will include data types for each block.
@@ -2594,7 +2595,7 @@ Note that the examples below are notional, and intended for illustrative purpose
       <td>optional
      <tr>
       <td><code>facets</code>
-      <td>array
+      <td>object
       <td>Details of each facet in the dataset, such as x and y axes or legend keys, for structured and semi-structured data
       <td>optional for unstructured data, required for structured and semi-structured data
      <tr>
@@ -3168,6 +3169,11 @@ An example of a <code>source</code> object citing a government data product.
       <td>media type string
       <td>The media type of the external data resource
       <td>optional
+     <tr>
+      <td><code>description</code>
+      <td>non-empty string
+      <td>A description of the external resource and its relationship to the inline data, such as an explanation of how values were selected, aggregated, or derived
+      <td>optional
    </table>
    <p>These resource references are distinct from the external JIM metadata association described in <a href="#external_files">External JIM documents</a>.</p>
    <p>The data used by JIM <a href="#bindings">bindings</a> should be included inline, rather than requiring retrieval of an external dataset.</p>
@@ -3228,6 +3234,7 @@ An example of a <code>source</code> object citing a government data product.
    <p>When a binding contains multiple shapes, they collectively represent the data identified by the binding’s <code>json</code> selector or selectors. If individual regions represent different data, they should be defined as separate bindings.</p>
    <p>When both <code>dom</code> and <code>shapes</code> are present, they identify alternative or supplementary regions representing the same data. For example, a binding may identify an SVG element through <code>dom</code> while defining a larger interaction region through <code>shapes</code>.</p>
    <p>All regions associated with a named binding constitute a single logical binding. Interaction with overlapping regions of the same binding must not cause duplicate behavior execution solely because more than one region was matched.</p>
+   <p>A conforming JIM viewer must make shape-based bindings available through the same non-pointer navigation and interaction mechanisms it provides for DOM-based bindings. This does not require each shape to be a separate focusable DOM element.</p>
    <div class="example" id="xmp_binding_raster">
     <a class="self-link" href="#xmp_binding_raster"></a>
 An example of bindings for two bars in an 800 × 600 raster chart. Each binding defines a rectangular interaction region over a bar and associates it with the corresponding inline data record.
@@ -3242,8 +3249,7 @@ An example of bindings for two bars in an 800 × 600 raster chart. Each binding 
           <c- f>"x"</c-><c- p>:</c-> <c- mi>80</c-><c- p>,</c->
           <c- f>"y"</c-><c- p>:</c-> <c- mi>200</c-><c- p>,</c->
           <c- f>"width"</c-><c- p>:</c-> <c- mi>50</c-><c- p>,</c->
-          <c- f>"height"</c-><c- p>:</c-> <c- mi>250</c-><c- p>,</c->
-          <c- f>"fill"</c-><c- p>:</c-> <c- u>"transparent"</c->
+          <c- f>"height"</c-><c- p>:</c-> <c- mi>250</c->
         <c- p>}</c->
       <c- p>],</c->
       <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[0].*"</c->
@@ -3255,8 +3261,7 @@ An example of bindings for two bars in an 800 × 600 raster chart. Each binding 
           <c- f>"x"</c-><c- p>:</c-> <c- mi>160</c-><c- p>,</c->
           <c- f>"y"</c-><c- p>:</c-> <c- mi>150</c-><c- p>,</c->
           <c- f>"width"</c-><c- p>:</c-> <c- mi>50</c-><c- p>,</c->
-          <c- f>"height"</c-><c- p>:</c-> <c- mi>300</c-><c- p>,</c->
-          <c- f>"fill"</c-><c- p>:</c-> <c- u>"transparent"</c->
+          <c- f>"height"</c-><c- p>:</c-> <c- mi>300</c->
         <c- p>}</c->
       <c- p>],</c->
       <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[1].*"</c->
@@ -3343,10 +3348,8 @@ An example of a <code>bindings</code> block with one binding, and a <code>behavi
         <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.bindings.dp5"</c->
       <c- p>},</c->
       <c- f>"enter"</c-><c- p>:</c-> <c- p>{</c->
-        <c- p>{</c->
-          <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
-            <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>50</c-><c- p>,</c-> <c- mi>100</c-><c- p>,</c-> <c- mi>150</c-> <c- p>]</c->
-          <c- p>}</c->
+        <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>50</c-><c- p>,</c-> <c- mi>100</c-><c- p>,</c-> <c- mi>150</c-> <c- p>]</c->
         <c- p>}</c->
       <c- p>}</c->
     <c- p>}</c->
@@ -3377,7 +3380,7 @@ An example of a <code>bindings</code> block with one binding, and a <code>behavi
    <h4 class="heading settled" data-level="4.2.3" id="external_data_ref"><span class="secno">4.2.3. </span><span class="content">External data reference</span><a class="self-link" href="#external_data_ref"></a></h4>
    <p>For large datasets, producers should include the data necessary to represent and interact with the graphic directly in the JIM document, while providing a reference to the complete underlying dataset as an external resource through the dataset’s <a href="#external_data_key"><code>externalData</code> key</a>.</p>
    <p>The inline data may consist of a subset of the external dataset, aggregated values, derived values, or a combination of these. It should contain sufficient information to support the graphic’s data bindings and intended interactions without requiring retrieval of the external dataset.</p>
-   <p>The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. Bindings for the current graphic resolve against the inline data, so changes to an external dataset do not silently change the data represented by existing bindings.</p>
+   <p>The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. When a graphic contains data bindings, those bindings resolve against data contained in the JIM document, not against resources referenced through <code>externalData</code>. Changes to an external dataset therefore do not silently change the data represented by existing bindings.</p>
    <p>When inline values are derived from an external dataset, producers should provide sufficient information about the selection, aggregation, or transformation of the source data to explain the relationship between them.</p>
    <p class="note" role="note"><span class="marker">Note:</span> It might seem unintuitive to refer to data as metadata, but in the context of a graphics image file, the "data" of the file is the graphical elements that compose the file, while the raw data (the dataset) that is being represented is the metadata.</p>
    <h3 class="heading settled" data-level="4.3" id="external_files"><span class="secno">4.3. </span><span class="content">External JIM documents</span><a class="self-link" href="#external_files"></a></h3>
@@ -3396,10 +3399,12 @@ diagram.webp
 diagram.webp.jim.json
 </pre>
    <p>When a JIM sidecar is opened in a supporting viewer, the viewer should use this naming convention to locate the associated image in the same directory. If the image cannot be found, the viewer should provide a means for the user to locate it.</p>
-   <p>This convention allows a sidecar to be opened as the entry point for viewing and interacting with a graphic, without requiring the original image to contain a reference to the JIM metadata.</p>
+   <p>When a JIM-capable viewer opens an image that does not contain valid embedded JIM metadata, it should look for an associated sidecar using this filename convention. If a matching, valid sidecar is found, the viewer should use it as the JIM metadata for the image. If the image contains invalid embedded JIM metadata, the viewer should report the error, even if a valid sidecar is available, and may use the sidecar. If the sidecar cannot be found, the viewer should provide a means for the user to locate it.</p>
+   <p>This convention allows discovery in either direction without requiring the original image to contain a reference to JIM metadata. It does not require viewers to make unsolicited network requests to discover remote sidecars.</p>
    <p>Other association mechanisms may be supported, including explicit references, package manifests, or application-defined mechanisms.</p>
    <h4 class="heading settled" data-level="4.3.2" id="sidecar_processing"><span class="secno">4.3.2. </span><span class="content">Sidecar processing</span><a class="self-link" href="#sidecar_processing"></a></h4>
    <p>A sidecar contains JIM metadata for its associated graphic and uses the same information model as embedded JIM metadata.</p>
+   <p>When a graphic has both embedded JIM metadata and an associated sidecar, a JIM viewer should use the embedded metadata when the graphic is opened directly. When a sidecar is opened directly, the viewer must use the metadata contained in that sidecar. A viewer may provide a means to select between embedded and sidecar metadata. The two representations must not be automatically merged.</p>
    <p>An external JIM sidecar is not a mechanism for importing or merging individual metadata blocks from another JIM document. Its contents are processed as the JIM metadata associated with the graphic.</p>
    <p>JIM documents may separately reference external resources, including datasets and media files. Such references are distinct from the association between an image and its JIM sidecar.</p>
    <h3 class="heading settled" data-level="4.4" id="behaviors"><span class="secno">4.4. </span><span class="content">Behaviors</span><a class="self-link" href="#behaviors"></a></h3>
@@ -4104,11 +4109,11 @@ An example of a <code>target</code> block with a <code>selector</code> key which
    <h5 class="heading settled" data-level="5.1.3.1" id="target_shape_coordinates"><span class="secno">5.1.3.1. </span><span class="content">Target shape coordinate systems</span><a class="self-link" href="#target_shape_coordinates"></a></h5>
    <p>Target shapes use the coordinate system of the graphic with which they are associated.</p>
    <p>For SVG graphics, shape coordinates are expressed in the coordinate system of the root SVG viewport, using its <code>viewBox</code> coordinate system when present.</p>
-   <p>For raster graphics, shape coordinates are expressed relative to the image’s intrinsic pixel dimensions, with the origin at the upper-left corner. For example, a shape at coordinates <code>(100, 100)</code> in an 800 × 600 image refers to that position in the original image, regardless of its displayed dimensions.</p>
+   <p>For raster graphics, shape coordinates are expressed relative to the image’s intrinsic pixel dimensions, with the origin at the upper-left corner. Coordinates are interpreted after applying any image orientation metadata, using the dimensions of the correctly oriented image. For example, a shape at coordinates <code>(100, 100)</code> in an 800 × 600 image refers to that position in the oriented image, regardless of its displayed dimensions.</p>
    <p>When a graphic is scaled, positioned, or cropped, conforming implementations must apply the corresponding transformations to its target shapes so that the defined regions remain aligned with the represented graphical features.</p>
    <p>Target shapes may be used directly within a behavior’s <code>target</code> object or within a named binding. The shape definitions and geometric interpretation are the same in both contexts.</p>
    <h5 class="heading settled" data-level="5.1.3.2" id="target_shape_fill_stroke"><span class="secno">5.1.3.2. </span><span class="content">Target shape <code>fill</code> and <code>stroke</code></span><a class="self-link" href="#target_shape_fill_stroke"></a></h5>
-   <p>The <code>fill</code> and <code>stroke</code> attributes control whether that shape’s fill or stroke area of that shape, respectively, must intercept pointer events. If the <code>fill</code> attribute is defined, the fill area of the shape must intercept pointer events. If the <code>stroke</code> attribute is defined, the stroke area of the shape, with a thickness defined by the <code>stroke-width</code> attribute, must intercept pointer events. If neither <code>fill</code> nor <code>stroke</code> is specified, the fill area of the shape must intercept pointer events by default.</p>
+   <p>The <code>fill</code> and <code>stroke</code> attributes determine which regions of a target shape intercept pointer events. If neither attribute is specified, the fill area must intercept pointer events by default. If only <code>fill</code> is specified, only the fill area must intercept pointer events. If only <code>stroke</code> is specified, only the stroke area must intercept pointer events, with a thickness defined by <code>stroke-width</code>. If both are specified, both areas must intercept pointer events. These hit-detection rules do not require the shapes to be visibly rendered.</p>
    <p>If the values of the <code>fill</code> or <code>stroke</code> attributes are valid color definitions, and a conforming implementation is rendering the overlay shape, the implemention should render that overlay shape with the colors defined.</p>
    <h5 class="heading settled" data-level="5.1.3.3" id="target_shape_keys"><span class="secno">5.1.3.3. </span><span class="content">Target shape keys</span><a class="self-link" href="#target_shape_keys"></a></h5>
    <p>A <code>shapes</code> block is an array of objects, each of which contains a set of keys representing the shape <code>element</code> (the SVG shape element tag name) and the required attributes. The definitive list of shapes is defined by the SVG 2.0 <a data-link-type="biblio" href="#biblio-svg2" title="Scalable Vector Graphics (SVG) 2">[SVG2]</a> specification. All SVG shape elements are valid.</p>
@@ -4609,7 +4614,7 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
 <pre class="highlight"><c- p>{</c->
   <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>200</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>200</c-><c- p>,</c-> <c- mi>350</c-><c- p>,</c-> <c- mi>150</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>100</c-> <c- p>],</c->
-    <c- f>"intensities"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> .<c- mi>5</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> .<c- mi>3</c-> <c- p>],</c->
+    <c- f>"intensities"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> <c- mf>0.5</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mf>0.3</c-> <c- p>]</c->
   <c- p>}</c->
 <c- p>}</c->
 </pre>
