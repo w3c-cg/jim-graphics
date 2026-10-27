@@ -1708,7 +1708,7 @@ Activity scope does not replace dataset `source` citations.
 
 The following action values are defined for common activities. Producers should use these values when applicable, but may use other non-empty strings. An unrecognized action value does not make an activity invalid and does not require special processing by consumers.
 
-The vocabulary is informed in part by the <a href="https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html">C2PA actions vocabulary</a>, which defines standardized actions associated with media provenance. JIM uses unprefixed values and also defines actions for JIM-specific and editorial activities. This does not imply C2PA conformance or require C2PA processing.
+The vocabulary is informed in part by the <a href="https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html">C2PA actions vocabulary</a> [[C2PA]], which defines standardized actions associated with media provenance. JIM uses unprefixed values and also defines actions for JIM-specific and editorial activities. This does not imply C2PA conformance or require C2PA processing.
 
 <table class="data">
   <thead>
@@ -3264,6 +3264,15 @@ The software that processes and presents the document to the end user.
       "https://mailarchive.ietf.org/arch/browse/jsonpath/"
     ],
     "biblio-type": "normative"
+  },
+  "c2pa": {
+    "authors": [
+      "Coalition for Content Provenance and Authenticity"
+    ],
+    "href": "https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html",
+    "title": "C2PA Technical Specification, Version 2.5",
+    "publisher": "C2PA",
+    "biblio-type": "informative"
   }
 }
 </pre>
