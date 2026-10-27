@@ -2373,7 +2373,7 @@ Target shapes may be used directly within a behavior's `target` object or within
 
 #### Target shape `fill` and `stroke` #### {#target_shape_fill_stroke}
 
-The `fill` and `stroke` attributes control whether that shape's fill or stroke area of that shape, respectively, must intercept pointer events. If the `fill` attribute is defined, the fill area of the shape must intercept pointer events. If the `stroke` attribute is defined, the stroke area of the shape, with a thickness defined by the `stroke-width` attribute, must intercept pointer events.
+The `fill` and `stroke` attributes control whether that shape's fill or stroke area of that shape, respectively, must intercept pointer events. If the `fill` attribute is defined, the fill area of the shape must intercept pointer events. If the `stroke` attribute is defined, the stroke area of the shape, with a thickness defined by the `stroke-width` attribute, must intercept pointer events. If neither `fill` nor `stroke` is specified, the fill area of the shape must intercept pointer events by default.
 
 If the values of the `fill` or `stroke` attributes are valid color definitions, and a conforming implementation is rendering the overlay shape, the implemention should render that overlay shape with the colors defined.
 
