@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
-  <meta content="9b71222bb7feed192ed50a4a49bc0a6a9096f40d" name="revision">
+  <meta content="c4967f6645a6da596e66e6e55d6f9030b878cdbc" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2171,6 +2171,7 @@ Parts of this work may be from another specification document.  If so, those par
           <li><a href="#series_records_data_block"><span class="secno">4.1.9.2</span> <span class="content">The <code>records</code> key</span></a>
           <li><a href="#items_data_block"><span class="secno">4.1.9.3</span> <span class="content">The <code>items</code> key</span></a>
           <li><a href="#source_data_block"><span class="secno">4.1.9.4</span> <span class="content">The <code>source</code> key</span></a>
+          <li><a href="#license_object"><span class="secno">4.1.9.5</span> <span class="content">License objects</span></a>
          </ol>
         <li><a href="#href_data_block"><span class="secno">4.1.10</span> <span class="content">The <code>href</code> key in a <code>datasets</code> block</span></a>
        </ol>
@@ -2214,15 +2215,21 @@ Parts of this work may be from another specification document.  If so, those par
          </ol>
        </ol>
       <li>
-       <a href="#document_provenance"><span class="secno">4.5</span> <span class="content">Document Provenance</span></a>
+       <a href="#document_provenance"><span class="secno">4.5</span> <span class="content">Provenance and Workflow</span></a>
        <ol class="toc">
-        <li><a href="#notes"><span class="secno">4.5.1</span> <span class="content">Notes</span></a>
+        <li><a href="#provenance_notes"><span class="secno">4.5.1</span> <span class="content">Notes</span></a>
         <li>
          <a href="#provenance_chain"><span class="secno">4.5.2</span> <span class="content">Provenance chain</span></a>
          <ol class="toc">
-          <li><a href="#provenance_role"><span class="secno">4.5.2.1</span> <span class="content">The <code>role</code> key</span></a>
-          <li><a href="#provenance_software"><span class="secno">4.5.2.2</span> <span class="content">The <code>software</code> key</span></a>
+          <li><a href="#provenance_activity"><span class="secno">4.5.2.1</span> <span class="content">Activity details</span></a>
+          <li><a href="#provenance_scope"><span class="secno">4.5.2.2</span> <span class="content">Activity scope</span></a>
+          <li><a href="#provenance_actions"><span class="secno">4.5.2.3</span> <span class="content">Common activity actions</span></a>
+          <li><a href="#provenance_contributors"><span class="secno">4.5.2.4</span> <span class="content">The <code>contributors</code> key</span></a>
+          <li><a href="#agent_reference"><span class="secno">4.5.2.5</span> <span class="content">Agent references</span></a>
+          <li><a href="#provenance_inputs"><span class="secno">4.5.2.6</span> <span class="content">The <code>inputs</code> key</span></a>
+          <li><a href="#provenance_software"><span class="secno">4.5.2.7</span> <span class="content">The <code>software</code> key</span></a>
          </ol>
+        <li><a href="#provenance_workflow"><span class="secno">4.5.3</span> <span class="content">Review and workflow activities</span></a>
        </ol>
       <li>
        <a href="#tags"><span class="secno">4.6</span> <span class="content">Tags</span></a>
@@ -3085,7 +3092,7 @@ An example of a <code>facets</code> block with two <code>[facet-string]</code> o
      <tr>
       <td><code>license</code>
       <td>object
-      <td>The license of the source data, with a <code>name</code> (non-empty string, required) and a <code>url</code> (string, optional)
+      <td>The license of the source data, as a <a href="#license_object">license object</a>
       <td>optional
    </table>
    <div class="example" id="xmp_dataset_source">
@@ -3109,6 +3116,27 @@ An example of a <code>source</code> object citing a government data product.
 <c- p>}</c->
 </pre>
    </div>
+   <h5 class="heading settled" data-level="4.1.9.5" id="license_object"><span class="secno">4.1.9.5. </span><span class="content">License objects</span><a class="self-link" href="#license_object"></a></h5>
+   <p>A license object identifies the license that applies to a resource or contribution. It is used by dataset <a href="#source_data_block"><code>source</code></a> and by <a href="#provenance_chain">provenance activities</a>.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>name</code>
+      <td>non-empty string
+      <td>The name of the license; this may be an SPDX license identifier, such as <code>CC-BY-4.0</code>
+      <td>required
+     <tr>
+      <td><code>url</code>
+      <td>string
+      <td>A URI of the license text, such as the location of a custom license
+      <td>optional
+   </table>
    <h4 class="heading settled" data-level="4.1.10" id="href_data_block"><span class="secno">4.1.10. </span><span class="content">The <code>href</code> key in a <code>datasets</code> block</span><a class="self-link" href="#href_data_block"></a></h4>
    <p>The <code>href</code> key defines an object that refers to an external data file. The content model and processing of the <code>href</code> key are different in the <code>datasets</code> block than in other metadata blocks.</p>
    <p>This external file can be used to tie data to graphical elements, as defined in <a href="#inline_data">Inline data</a>.</p>
@@ -3395,147 +3423,425 @@ An example of a <code>haptic</code> block with two haptic object entries in an a
    <div class="todo">
 <b>TODO:</b> Reference and expand on CSS prefers-dark-mode media query.
 </div>
-   <h3 class="heading settled" data-level="4.5" id="document_provenance"><span class="secno">4.5. </span><span class="content">Document Provenance</span><a class="self-link" href="#document_provenance"></a></h3>
-   <p>Provenance describes where a document came from. This includes entries such as authors, organizations, date and time created or modified, where it was first published, the title of the paper or article it supplemented, or the original work on which it was based.</p>
+   <h3 class="heading settled" data-level="4.5" id="document_provenance"><span class="secno">4.5. </span><span class="content">Provenance and Workflow</span><a class="self-link" href="#document_provenance"></a></h3>
+   <p>The <code>provenance</code> block records the origins, development, review, and publication of a graphic and its JIM metadata. It supports both documenting a graphic’s history and managing workflows involving the graphic, its JIM metadata, and associated data.</p>
+   <p>The <code>provenance</code> block may contain general <code>notes</code>, such as acknowledgments, sponsorships, and dedications, and a <code>chain</code> of activity records. Activities may create or modify content, or record evaluations, decisions, and other steps that do not change the content. Activity records may identify contributors, software, inputs, resulting documents, licensing terms, status, and other information about what occurred and why.</p>
+   <p>These structured records can support workflow management. Authoring tools, publishing platforms, and other systems can use them to coordinate work, track progress, manage reviews and revisions, record decisions and approvals, and support handoffs between people, organizations, and software. In combination with annotations, activity records can also support workflows involving feedback, requested changes, and their resolution.</p>
+   <p>The provenance record provides a lightweight, document-internal history that travels with the document. It need not be complete or independently verified. JIM does not prescribe particular workflows or provide authoritative version control, rights management, license validation, workflow enforcement, or verification of contributor identity. External systems may interpret these records, automate workflow operations, and impose additional requirements, but such requirements are outside the scope of JIM conformance.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Document provenance is distinct from the provenance of an individual dataset, which is specified in the <code>dataset</code> <a href="#source_data_block"><code>source</code> data block</a>.</p>
    <p>A <code>provenance</code> block is an object with the key <code>provenance</code>.</p>
 <pre class="highlight"><c- p>{</c->
   <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"notes"</c-><c- p>:</c-> <c- p>[</c->
-      <c- u>"item 1"</c-><c- p>,</c->
-      <c- u>"item 2"</c->
-    <c- p>]</c->
-  <c- p>}</c->
-<c- p>}</c->
-</pre>
-   <h4 class="heading settled" data-level="4.5.1" id="notes"><span class="secno">4.5.1. </span><span class="content">Notes</span><a class="self-link" href="#notes"></a></h4>
-   <p>The <code>notes</code> key defines an array where any details not covered by specific keys can be identified. This might include the name of the organization or individuals who sponsored the work, a dedications to a meaningful person in the author’s life, and so on.</p>
-   <p>Each item should be a quoted non-empty string separated by a comma.</p>
-<pre class="highlight"><c- p>{</c->
-  <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"notes"</c-><c- p>:</c-> <c- p>[</c->
-      <c- u>"item 1"</c-><c- p>,</c->
-      <c- u>"item 2"</c->
-    <c- p>]</c->
-  <c- p>}</c->
-<c- p>}</c->  
-</pre>
-   <h4 class="heading settled" data-level="4.5.2" id="provenance_chain"><span class="secno">4.5.2. </span><span class="content">Provenance chain</span><a class="self-link" href="#provenance_chain"></a></h4>
-   <p>The <code>chain</code> key defines an ordered array expressing the provenance chain of the document: the sequence of parties who authored, published, or adapted the work over time. It preserves credit to the original author or publisher as content is adapted and shared.</p>
-   <p>Each item in the <code>chain</code> array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative. When <code>date</code> is present on two or more items, their dates must not decrease in array order. Validators and consumers should warn when they do.</p>
-   <p>Each item must include at least one of the <code>name</code> or <code>organization</code> keys. All other keys are optional.</p>
-   <table class="data">
-    <thead>
-     <tr>
-      <th>key
-      <th>value type
-      <th>description
-      <th>requirement
-    <tbody>
-     <tr>
-      <td><code>role</code>
-      <td>token
-      <td>The party’s relationship to this authored state, such as <code>author</code>, <code>publisher</code>, or <code>adapter</code>
-      <td>optional
-     <tr>
-      <td><code>name</code>
-      <td>non-empty string
-      <td>The name of the person credited for this state
-      <td>required if <code>organization</code> is absent
-     <tr>
-      <td><code>organization</code>
-      <td>non-empty string
-      <td>The name of the organization credited for this state
-      <td>required if <code>name</code> is absent
-     <tr>
-      <td><code>title</code>
-      <td>non-empty string
-      <td>The title of the work at this authored state
-      <td>optional
-     <tr>
-      <td><code>url</code>
-      <td>string
-      <td>A URI locating the source document or work for this authored state
-      <td>optional
-     <tr>
-      <td><code>date</code>
-      <td>date-time string
-      <td>The date and time this state was created or modified, as an <a data-link-type="biblio" href="#biblio-rfc3339" title="Date and Time on the Internet: Timestamps">[RFC3339]</a> <code>date-time</code>
-      <td>optional
-     <tr>
-      <td><code>software</code>
-      <td>object
-      <td>The tool that produced this authored state, if any
-      <td>optional
-   </table>
-   <h5 class="heading settled" data-level="4.5.2.1" id="provenance_role"><span class="secno">4.5.2.1. </span><span class="content">The <code>role</code> key</span><a class="self-link" href="#provenance_role"></a></h5>
-   <p>The <code>role</code> key denotes the relationship of the party to the authored state it describes. When <code>role</code> is absent, the item’s role is <code>author</code> if it is the first item in the <code>chain</code>, and <code>adapter</code> otherwise. An item should set <code>role</code> explicitly when this default does not apply — for example, when the origin of the work is a <code>publisher</code>, when a party is an <code>editor</code>, or when the origin has multiple co-authors.</p>
-   <p>The value should be one of the following tokens:</p>
-   <ul>
-    <li data-md>
-     <p><code>author</code>: the original creator of the work.</p>
-    <li data-md>
-     <p><code>publisher</code>: a party that published or distributed the work.</p>
-    <li data-md>
-     <p><code>adapter</code>: a party that adapted, remixed, or modified the work for a particular need.</p>
-    <li data-md>
-     <p><code>editor</code>: a party that revised the work without altering its essential content.</p>
-    <li data-md>
-     <p><code>contributor</code>: any other contributing party.</p>
-   </ul>
-   <p>Implementations may define additional <code>role</code> tokens for cases not covered by this list. Consumers that do not recognize a <code>role</code> token should treat the entry as a <code>contributor</code>.</p>
-   <h5 class="heading settled" data-level="4.5.2.2" id="provenance_software"><span class="secno">4.5.2.2. </span><span class="content">The <code>software</code> key</span><a class="self-link" href="#provenance_software"></a></h5>
-   <p>The <code>software</code> key denotes an object identifying the tool that produced the authored state, such as a chart generator, an authoring application, or an automated service. The <code>software</code> object records the instrument used; the crediting party remains the <code>name</code> or <code>organization</code> of the containing item.</p>
-   <p>The term <code>software</code> is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see <a href="#conform_imp">§ 2.4 Conforming implementation</a>).</p>
-   <table class="data">
-    <thead>
-     <tr>
-      <th>key
-      <th>value type
-      <th>description
-      <th>requirement
-    <tbody>
-     <tr>
-      <td><code>name</code>
-      <td>non-empty string
-      <td>The name of the tool
-      <td>required
-     <tr>
-      <td><code>version</code>
-      <td>non-empty string
-      <td>The version of the tool that produced this state
-      <td>optional
-     <tr>
-      <td><code>organization</code>
-      <td>non-empty string
-      <td>The vendor or organization that produces the tool
-      <td>optional
-   </table>
-<pre class="highlight"><c- p>{</c->
-  <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"notes"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"Sponsor"</c-><c- p>:</c-> <c- u>"Produced with support from Example Foundation"</c-><c- p>,</c->
+      <c- f>"Dedication"</c-><c- p>:</c-> <c- u>"Dedicated to Jane Smith"</c->
+    <c- p>},</c->
     <c- f>"chain"</c-><c- p>:</c-> <c- p>[</c->
       <c- p>{</c->
-        <c- f>"name"</c-><c- p>:</c-> <c- u>"Jamie Rivera"</c-><c- p>,</c->
-        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-24T14:30:00Z"</c-><c- p>,</c->
-        <c- f>"software"</c-><c- p>:</c-> <c- p>{</c->
-          <c- f>"name"</c-><c- p>:</c-> <c- u>"ParaCharts"</c-><c- p>,</c->
-          <c- f>"version"</c-><c- p>:</c-> <c- u>"2.3.1"</c-><c- p>,</c->
-          <c- f>"organization"</c-><c- p>:</c-> <c- u>"Fizz Studio"</c->
-        <c- p>}</c->
-      <c- p>},</c->
-      <c- p>{</c->
-        <c- f>"role"</c-><c- p>:</c-> <c- u>"adapter"</c-><c- p>,</c->
-        <c- f>"name"</c-><c- p>:</c-> <c- u>"Alex Chen"</c-><c- p>,</c->
-        <c- f>"title"</c-><c- p>:</c-> <c- u>"Quarterly Sales (tactile edition)"</c-><c- p>,</c->
-        <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/works/q-sales-tactile.svg"</c-><c- p>,</c->
-        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-25T09:00:00Z"</c->
+        <c- f>"action"</c-><c- p>:</c-> <c- u>"created"</c-><c- p>,</c->
+        <c- f>"scope"</c-><c- p>:</c-> <c- p>[</c-><c- u>"graphic"</c-><c- p>],</c->
+        <c- f>"label"</c-><c- p>:</c-> <c- u>"Original graphic"</c-><c- p>,</c->
+        <c- f>"contributors"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c-> <c- f>"name"</c-><c- p>:</c-> <c- u>"Jamie Rivera"</c-> <c- p>}</c->
+        <c- p>]</c->
       <c- p>}</c->
     <c- p>]</c->
   <c- p>}</c->
 <c- p>}</c->
 </pre>
-   <p class="note" role="note"><span class="marker">Note:</span> In the example above, the first item omits <code>role</code> and defaults to <code>author</code>; the second sets <code>role</code> to <code>adapter</code> explicitly. Set <code>role</code> to record other relationships, such as <code>"role": "publisher"</code>.</p>
-   <p class="note" role="note"><span class="marker">Note:</span> Identifiers meaningful only within a single platform, such as internal database keys, <span class="allow-2119">should</span> be included in the <code>extensions</code> block rather than in <code>chain</code>, so the provenance chain remains portable between implementations.</p>
+   <h4 class="heading settled" data-level="4.5.1" id="provenance_notes"><span class="secno">4.5.1. </span><span class="content">Notes</span><a class="self-link" href="#provenance_notes"></a></h4>
+   <p>The document-level <code>notes</code> key defines an object containing general information about the document or its provenance that is not necessarily associated with an individual activity. Each key is a human-readable label, and each value may be any valid JSON value, including nested objects and arrays.</p>
+   <p>For example, notes may acknowledge sponsors, credit supporting organizations, or record a dedication.</p>
+   <p>Notes are informational. Consumers may present notes in an implementation-defined manner. JIM defines no vocabulary for note keys and requires no other processing.</p>
+   <p>Activities in the <a href="#provenance_chain">provenance chain</a> may also have <code>notes</code>, with the same form and treatment, for information about an individual activity.</p>
+   <h4 class="heading settled" data-level="4.5.2" id="provenance_chain"><span class="secno">4.5.2. </span><span class="content">Provenance chain</span><a class="self-link" href="#provenance_chain"></a></h4>
+   <p>The <code>chain</code> key defines an array of records describing activities associated with the creation, modification, adaptation, annotation, review, or publication of the graphic and its JIM metadata. Each record describes one activity, including optional information about its inputs, contributors, purpose, licensing terms, and resulting document.</p>
+   <p>Each item in the <code>chain</code> array is an activity object. Items are ordered chronologically, from earliest to latest recorded activity. When <code>date</code> is present on two or more items, the dates must not decrease in array order; validators and consumers should warn when they do. Array order does not establish derivation between artifacts: the <code>inputs</code> of each activity identify the materials used for that activity.</p>
+   <p>Authoring tools that modify a document should preserve its existing chain and append new activities. A producer may nonetheless omit or consolidate activities, for example to remove internal process steps before publication.</p>
+   <p>Each activity must contain an <code>action</code> key. All other keys are optional.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>id</code>
+      <td>non-empty string
+      <td>An identifier for the activity, unique within the document, so that it can be referenced by inputs or other metadata within that document
+      <td>optional
+     <tr>
+      <td><code>action</code>
+      <td>non-empty string
+      <td>The kind of activity performed; see <a href="#provenance_actions">Common activity actions</a>
+      <td>required
+     <tr>
+      <td><code>scope</code>
+      <td>array of non-empty strings
+      <td>The kinds of content concerned by the activity
+      <td>optional
+     <tr>
+      <td><code>label</code>
+      <td>non-empty string
+      <td>A brief human-readable label for the activity, such as "Added haptics" or "Translated to Mandarin"
+      <td>optional
+     <tr>
+      <td><code>description</code>
+      <td>string
+      <td>A human-readable explanation of the activity, including its purpose, rationale, or effects
+      <td>optional
+     <tr>
+      <td><code>date</code>
+      <td>date-time string
+      <td>When the activity took place, as an <a data-link-type="biblio" href="#biblio-rfc3339" title="Date and Time on the Internet: Timestamps">[RFC3339]</a> <code>date-time</code>
+      <td>optional
+     <tr>
+      <td><code>version</code>
+      <td>non-empty string
+      <td>A version label assigned to the document resulting from the activity
+      <td>optional
+     <tr>
+      <td><code>contributors</code>
+      <td>array of agent references
+      <td>People or organizations associated with the activity
+      <td>optional
+     <tr>
+      <td><code>inputs</code>
+      <td>array of objects
+      <td>Documents or other resources used as inputs to the activity
+      <td>optional
+     <tr>
+      <td><code>url</code>
+      <td>string
+      <td>A URI identifying the canonical location of the document resulting from the activity
+      <td>optional
+     <tr>
+      <td><code>license</code>
+      <td>object
+      <td>The license associated with the material contributed through the activity, as a <a href="#license_object">license object</a>
+      <td>optional
+     <tr>
+      <td><code>status</code>
+      <td>string
+      <td>Free-form status information recorded for the activity or its result
+      <td>optional
+     <tr>
+      <td><code>notes</code>
+      <td>object
+      <td>Labeled notes about the activity, in the same form as document-level <a href="#provenance_notes">notes</a>
+      <td>optional
+     <tr>
+      <td><code>software</code>
+      <td>array of agent references
+      <td>Software used to perform the activity, if any
+      <td>optional
+   </table>
+   <h5 class="heading settled" data-level="4.5.2.1" id="provenance_activity"><span class="secno">4.5.2.1. </span><span class="content">Activity details</span><a class="self-link" href="#provenance_activity"></a></h5>
+   <p>The <code>action</code> value identifies the activity performed. Common values are defined in <a href="#provenance_actions">Common activity actions</a>. JIM does not impose processing behavior based on action values.</p>
+   <p>The <code>label</code> and <code>description</code> keys describe the activity, not the title or subject matter of the graphic. A <code>description</code> may explain why an activity was undertaken as well as what changed.</p>
+   <p>The <code>version</code> key is a human-readable label, not a unique identifier. Different branches of a document’s history may use the same version label.</p>
+   <p>The <code>url</code> key, when present, identifies the canonical location of the document resulting from the activity. Neither <code>version</code> nor <code>url</code> establishes a managed version-control system.</p>
+   <p>The <code>license</code> key records the license associated with the contribution made through the activity. It does not change licensing terms for pre-existing input materials, and its presence does not imply that JIM evaluates license compatibility or enforces licenses.</p>
+   <p>The <code>status</code> key is a free-form string. The <code>notes</code> key has the same form and treatment as document-level <a href="#provenance_notes">notes</a>. JIM defines no vocabulary for <code>status</code> values or note keys, and requires no processing for either key. An external system may apply additional conventions or constraints.</p>
+   <h5 class="heading settled" data-level="4.5.2.2" id="provenance_scope"><span class="secno">4.5.2.2. </span><span class="content">Activity scope</span><a class="self-link" href="#provenance_scope"></a></h5>
+   <p>The optional <code>scope</code> key defines an array of strings identifying the broad kinds of content to which an activity relates. An activity may concern more than one kind of content.</p>
+   <p>The following values are defined:</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>value
+      <th>description
+    <tbody>
+     <tr>
+      <td><code>graphic</code>
+      <td>The graphical representation, including its visual or other rendered presentation
+     <tr>
+      <td><code>jim</code>
+      <td>The JIM metadata associated with the graphic, including descriptions, behaviors, and annotations
+     <tr>
+      <td><code>data</code>
+      <td>The data associated with the graphic
+   </table>
+   <p>Other non-empty strings are permitted.</p>
+   <p>The <code>scope</code> key provides a broad classification of an activity. It does not identify a particular graphic element, annotation, file, or dataset.</p>
+   <p>An activity may concern content without modifying it. For example, a review might have a <code>scope</code> of <code>["graphic", "jim"]</code>. The <code>scope</code> key provides a general classification; <code>inputs</code> separately identifies specific resources used by the activity.</p>
+   <p>Activity scope does not replace dataset <code>source</code> citations.</p>
+   <h5 class="heading settled" data-level="4.5.2.3" id="provenance_actions"><span class="secno">4.5.2.3. </span><span class="content">Common activity actions</span><a class="self-link" href="#provenance_actions"></a></h5>
+   <p>The following action values are defined for common activities. Producers should use these values when applicable, but may use other non-empty strings. An unrecognized action value does not make an activity invalid and does not require special processing by consumers.</p>
+   <p>The vocabulary is informed in part by the <a href="https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html">C2PA actions vocabulary</a>, which defines standardized actions associated with media provenance. JIM uses unprefixed values and also defines actions for JIM-specific and editorial activities. This does not imply C2PA conformance or require C2PA processing.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>action
+      <th>description
+      <th>C2PA counterpart
+    <tbody>
+     <tr>
+      <td><code>created</code>
+      <td>Created a new graphic, JIM representation, or other resource
+      <td><code>c2pa.created</code>
+     <tr>
+      <td><code>edited</code>
+      <td>Revised or corrected existing material
+      <td><code>c2pa.edited</code>
+     <tr>
+      <td><code>adapted</code>
+      <td>Adapted material for another purpose, audience, modality, or environment
+      <td>
+     <tr>
+      <td><code>translated</code>
+      <td>Translated linguistic content into another language or language variety
+      <td><code>c2pa.translated</code>
+     <tr>
+      <td><code>described</code>
+      <td>Added or revised descriptive or semantic information
+      <td>
+     <tr>
+      <td><code>annotated</code>
+      <td>Added or revised annotations
+      <td>
+     <tr>
+      <td><code>reviewed</code>
+      <td>Examined material and recorded findings or feedback
+      <td><code>c2pa.reviewed</code>
+     <tr>
+      <td><code>validated</code>
+      <td>Checked material against criteria, requirements, or tests
+      <td>
+     <tr>
+      <td><code>changesRequested</code>
+      <td>Requested changes to material
+      <td>
+     <tr>
+      <td><code>approved</code>
+      <td>Recorded an approval or sign-off
+      <td>
+     <tr>
+      <td><code>merged</code>
+      <td>Combined material from multiple inputs
+      <td>
+     <tr>
+      <td><code>published</code>
+      <td>Made material available for distribution or use
+      <td><code>c2pa.published</code>
+   </table>
+   <p>The distinction between <code>described</code> and <code>annotated</code> is intentional. Descriptions convey information about the graphic, while annotations associate additional information, such as review comments, with a resource or part of it. A single activity may involve both.</p>
+   <p>Activities such as <code>reviewed</code>, <code>validated</code>, and <code>approved</code> record that an evaluation or decision occurred. These actions do not imply that JIM independently verifies the findings or enforces the resulting decision.</p>
+   <h5 class="heading settled" data-level="4.5.2.4" id="provenance_contributors"><span class="secno">4.5.2.4. </span><span class="content">The <code>contributors</code> key</span><a class="self-link" href="#provenance_contributors"></a></h5>
+   <p>The <code>contributors</code> key defines an array of agent references identifying people or organizations involved in the activity. An activity may have multiple contributors. Each item in the <code>contributors</code> array is an <a href="#agent_reference">agent reference</a>.</p>
+   <h5 class="heading settled" data-level="4.5.2.5" id="agent_reference"><span class="secno">4.5.2.5. </span><span class="content">Agent references</span><a class="self-link" href="#agent_reference"></a></h5>
+   <p>An agent reference identifies or describes a person, organization, software system, or other agent. People, organizations, and software use the same structure.</p>
+   <p>An agent reference is either a URI string or an object. A URI string is shorthand for an object containing only <code>id</code>. A string used as an agent reference is always interpreted as an identifier, never as a name; a name is given with the <code>name</code> key.</p>
+   <p>An agent reference object must contain at least one of the <code>id</code>, <code>orcid</code>, <code>name</code>, <code>nickname</code>, or <code>emails</code> keys, and must not contain keys other than those below.</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>id</code>
+      <td>string
+      <td>A URI identifying the agent; a stable absolute URI should be used when one is available
+      <td>optional
+     <tr>
+      <td><code>orcid</code>
+      <td>string
+      <td>An ORCID iD identifying a person; must not be used for organizations, software, or other non-person agents
+      <td>optional
+     <tr>
+      <td><code>name</code>
+      <td>non-empty string
+      <td>The agent’s name
+      <td>optional
+     <tr>
+      <td><code>nickname</code>
+      <td>non-empty string
+      <td>An informal or alternative name by which the agent is known
+      <td>optional
+     <tr>
+      <td><code>title</code>
+      <td>non-empty string
+      <td>A general professional, organizational, or descriptive title for the agent
+      <td>optional
+     <tr>
+      <td><code>version</code>
+      <td>string or object
+      <td>The version of software used: either a version string, or an object with the same form and treatment as <a href="#provenance_notes">notes</a>, such as one recording a model name, release, and quality setting for an AI system
+      <td>optional for software agents (those in an activity’s <code>software</code> key); must not be used for other agents
+     <tr>
+      <td><code>emails</code>
+      <td>array of email references
+      <td>One or more email addresses associated with the agent
+      <td>optional
+     <tr>
+      <td><code>affiliations</code>
+      <td>array of affiliation objects
+      <td>The agent’s relationships to organizations
+      <td>optional
+   </table>
+   <p>When <code>id</code> is present, it identifies the agent for machine processing. Two agent references with the same <code>id</code> identify the same agent. Consumers must not assume that two agent references identify the same agent merely because they share a name, nickname, title, email address, or affiliation.</p>
+   <p>An agent reference describes the agent, not the agent’s part in an activity. The activity’s <code>action</code>, and the key in which the agent reference appears, determine that.</p>
+   <p>An <strong>email reference</strong> is an object containing at least one of the <code>email</code> or <code>hash</code> keys. The <code>email</code> key, when present, contains an email address. The <code>hash</code> key, when present, contains the lowercase hexadecimal SHA-1 digest of the corresponding <code>mailto:</code> URI. Either key may be used without the other. The <code>hash</code> key provides compatibility with the Web Annotation Data Model; it is not a privacy or security mechanism.</p>
+   <p>An <strong>affiliation object</strong> is an object with a required <code>organization</code> key, whose value is an organization reference, and optional <code>title</code> and <code>emails</code> keys giving the agent’s title and email references within that organization. The order of affiliations has no meaning.</p>
+   <p>An <strong>organization reference</strong> is either a string, which is the organization’s name, or an object containing at least one of an <code>id</code> key, whose value is a URI identifying the organization, and a <code>name</code> key.</p>
+   <div class="example" id="xmp_agent_reference">
+    <a class="self-link" href="#xmp_agent_reference"></a>
+An agent reference for a person with an ORCID iD and one affiliation, and an agent reference for an organization.
+
+
+<pre class="highlight"><c- p>[</c->
+  <c- p>{</c->
+    <c- f>"orcid"</c-><c- p>:</c-> <c- u>"0000-0002-1825-0097"</c-><c- p>,</c->
+    <c- f>"name"</c-><c- p>:</c-> <c- u>"Alex Chen"</c-><c- p>,</c->
+    <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c->
+      <c- p>{</c->
+        <c- f>"organization"</c-><c- p>:</c-> <c- u>"Accessibility Lab"</c-><c- p>,</c->
+        <c- f>"title"</c-><c- p>:</c-> <c- u>"Accessibility specialist"</c->
+      <c- p>}</c->
+    <c- p>]</c->
+  <c- p>},</c->
+  <c- p>{</c->
+    <c- f>"id"</c-><c- p>:</c-> <c- u>"https://example.org/"</c-><c- p>,</c->
+    <c- f>"name"</c-><c- p>:</c-> <c- u>"Example Publishing"</c->
+  <c- p>}</c->
+<c- p>]</c->
+</pre>
+   </div>
+   <p class="note" role="note"><span class="marker">Note:</span> Provenance records can identify individual people by name, email address, or identifier, and that information travels with the document wherever it is shared. Producers are encouraged to obtain consent before identifying individuals and to omit email addresses from documents intended for public distribution; crediting an organization alone, as its own agent reference, is also an option. See also <a href="#privacy">§ 13.4 Privacy</a>.</p>
+   <h5 class="heading settled" data-level="4.5.2.6" id="provenance_inputs"><span class="secno">4.5.2.6. </span><span class="content">The <code>inputs</code> key</span><a class="self-link" href="#provenance_inputs"></a></h5>
+   <p>The <code>inputs</code> key defines an array of objects referencing documents or other resources used by the activity. Each input object must contain either a <code>url</code> key, whose value is a URI identifying the input resource, or an <code>activity</code> key, whose value is the <code>id</code> of an earlier activity in the chain whose result was used.</p>
+   <p>An activity may have multiple inputs, for example when combining two adaptations or when using a graphic and a separate JIM file. Multiple activities may also reference the same input. These references allow a document’s history to express branching or merging without requiring version labels to be globally unique.</p>
+   <p>Input references are informational. JIM does not require the resources to be available or require consumers to retrieve them.</p>
+   <h5 class="heading settled" data-level="4.5.2.7" id="provenance_software"><span class="secno">4.5.2.7. </span><span class="content">The <code>software</code> key</span><a class="self-link" href="#provenance_software"></a></h5>
+   <p>The <code>software</code> key defines an array of <a href="#agent_reference">agent references</a> identifying software used to perform the activity, such as a chart generator, authoring application, automated service, or AI system. An activity may use more than one piece of software. Software is listed separately from <code>contributors</code>, so that the people and organizations credited for an activity are distinct from the tools they used.</p>
+   <p>The term <code>software</code> is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see <a href="#conform_imp">§ 2.4 Conforming implementation</a>).</p>
+   <p>A software agent reference may contain a <code>version</code>. The vendor or organization that produces the software, if recorded, is given as an affiliation.</p>
+   <div class="example" id="xmp_provenance_software">
+    <a class="self-link" href="#xmp_provenance_software"></a>
+Two pieces of software used in one activity: an authoring application with a simple version string, and an AI system whose version is described with labeled values.
+
+
+<pre class="highlight"><c- f>"software"</c-><c- p>:</c-> <c- p>[</c->
+  <c- p>{</c->
+    <c- f>"name"</c-><c- p>:</c-> <c- u>"Inkscape"</c-><c- p>,</c->
+    <c- f>"version"</c-><c- p>:</c-> <c- u>"1.4"</c-><c- p>,</c->
+    <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c-> <c- p>{</c-> <c- f>"organization"</c-><c- p>:</c-> <c- u>"Inkscape Project"</c-> <c- p>}</c-> <c- p>]</c->
+  <c- p>},</c->
+  <c- p>{</c->
+    <c- f>"name"</c-><c- p>:</c-> <c- u>"Example Assistant"</c-><c- p>,</c->
+    <c- f>"version"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"Model"</c-><c- p>:</c-> <c- u>"example-model-3"</c-><c- p>,</c->
+      <c- f>"Release"</c-><c- p>:</c-> <c- u>"2026-06"</c-><c- p>,</c->
+      <c- f>"Quality"</c-><c- p>:</c-> <c- u>"high"</c->
+    <c- p>},</c->
+    <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c-> <c- p>{</c-> <c- f>"organization"</c-><c- p>:</c-> <c- u>"Example AI, Inc."</c-> <c- p>}</c-> <c- p>]</c->
+  <c- p>}</c->
+<c- p>]</c->
+</pre>
+   </div>
+   <div class="example" id="xmp_provenance_activities">
+    <a class="self-link" href="#xmp_provenance_activities"></a>
+This example records the creation of a graphic, the addition of JIM metadata, and an accessibility review. The graphic and its JIM metadata can have different contributors and licensing terms. The review records a status and supporting notes, without prescribing what a publisher has to do with them.
+
+
+<pre class="highlight"><c- p>{</c->
+  <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"notes"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"Sponsor"</c-><c- p>:</c-> <c- u>"Example Foundation"</c->
+    <c- p>},</c->
+    <c- f>"chain"</c-><c- p>:</c-> <c- p>[</c->
+      <c- p>{</c->
+        <c- f>"action"</c-><c- p>:</c-> <c- u>"created"</c-><c- p>,</c->
+        <c- f>"scope"</c-><c- p>:</c-> <c- p>[</c-><c- u>"graphic"</c-><c- p>],</c->
+        <c- f>"label"</c-><c- p>:</c-> <c- u>"Original chart"</c-><c- p>,</c->
+        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-24T14:30:00Z"</c-><c- p>,</c->
+        <c- f>"version"</c-><c- p>:</c-> <c- u>"1.0.0"</c-><c- p>,</c->
+        <c- f>"contributors"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c->
+            <c- f>"name"</c-><c- p>:</c-> <c- u>"Jamie Rivera"</c-><c- p>,</c->
+            <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c->
+              <c- p>{</c-> <c- f>"organization"</c-><c- p>:</c-> <c- u>"Example Publishing"</c-> <c- p>}</c->
+            <c- p>]</c->
+          <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"software"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c->
+            <c- f>"name"</c-><c- p>:</c-> <c- u>"PopCharts"</c-><c- p>,</c->
+            <c- f>"version"</c-><c- p>:</c-> <c- u>"2.3.1"</c-><c- p>,</c->
+            <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c-> <c- p>{</c-> <c- f>"organization"</c-><c- p>:</c-> <c- u>"Exemplar Software, LLC"</c-> <c- p>}</c-> <c- p>]</c->
+          <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/charts/sales-v1.svg"</c-><c- p>,</c->
+        <c- f>"license"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"name"</c-><c- p>:</c-> <c- u>"CC-BY-4.0"</c-><c- p>,</c->
+          <c- f>"url"</c-><c- p>:</c-> <c- u>"https://creativecommons.org/licenses/by/4.0/"</c->
+        <c- p>}</c->
+      <c- p>},</c->
+      <c- p>{</c->
+        <c- f>"id"</c-><c- p>:</c-> <c- u>"add-descriptions"</c-><c- p>,</c->
+        <c- f>"action"</c-><c- p>:</c-> <c- u>"described"</c-><c- p>,</c->
+        <c- f>"scope"</c-><c- p>:</c-> <c- p>[</c-><c- u>"jim"</c-><c- p>],</c->
+        <c- f>"label"</c-><c- p>:</c-> <c- u>"Added accessible descriptions"</c-><c- p>,</c->
+        <c- f>"description"</c-><c- p>:</c-> <c- u>"Added structured descriptions and navigation metadata for screen-reader users."</c-><c- p>,</c->
+        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-25T09:00:00Z"</c-><c- p>,</c->
+        <c- f>"version"</c-><c- p>:</c-> <c- u>"1.1.0"</c-><c- p>,</c->
+        <c- f>"contributors"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c->
+            <c- f>"name"</c-><c- p>:</c-> <c- u>"Alex Chen"</c-><c- p>,</c->
+            <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c->
+              <c- p>{</c->
+                <c- f>"organization"</c-><c- p>:</c-> <c- u>"Accessibility Lab"</c-><c- p>,</c->
+                <c- f>"emails"</c-><c- p>:</c-> <c- p>[</c-> <c- p>{</c-> <c- f>"email"</c-><c- p>:</c-> <c- u>"alex@example.org"</c-> <c- p>}</c-> <c- p>]</c->
+              <c- p>}</c->
+            <c- p>]</c->
+          <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"inputs"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c-> <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/charts/sales-v1.svg"</c-> <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/charts/sales-v1.1.jim.json"</c-><c- p>,</c->
+        <c- f>"license"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"name"</c-><c- p>:</c-> <c- u>"Accessibility Lab Open Metadata License"</c-><c- p>,</c->
+          <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/licenses/open-metadata"</c->
+        <c- p>}</c->
+      <c- p>},</c->
+      <c- p>{</c->
+        <c- f>"action"</c-><c- p>:</c-> <c- u>"reviewed"</c-><c- p>,</c->
+        <c- f>"scope"</c-><c- p>:</c-> <c- p>[</c-><c- u>"graphic"</c-><c- p>,</c-> <c- u>"jim"</c-><c- p>],</c->
+        <c- f>"label"</c-><c- p>:</c-> <c- u>"Accessibility review"</c-><c- p>,</c->
+        <c- f>"description"</c-><c- p>:</c-> <c- u>"Reviewed the descriptions and keyboard navigation before publication."</c-><c- p>,</c->
+        <c- f>"date"</c-><c- p>:</c-> <c- u>"2026-08-26T11:30:00Z"</c-><c- p>,</c->
+        <c- f>"contributors"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c->
+            <c- f>"name"</c-><c- p>:</c-> <c- u>"Morgan Lee"</c-><c- p>,</c->
+            <c- f>"affiliations"</c-><c- p>:</c-> <c- p>[</c->
+              <c- p>{</c-> <c- f>"organization"</c-><c- p>:</c-> <c- u>"Example Publishing"</c-> <c- p>}</c->
+            <c- p>]</c->
+          <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"inputs"</c-><c- p>:</c-> <c- p>[</c->
+          <c- p>{</c-> <c- f>"activity"</c-><c- p>:</c-> <c- u>"add-descriptions"</c-> <c- p>}</c->
+        <c- p>],</c->
+        <c- f>"status"</c-><c- p>:</c-> <c- u>"approved with exceptions"</c-><c- p>,</c->
+        <c- f>"notes"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"Ticket"</c-><c- p>:</c-> <c- u>"A11Y-247"</c-><c- p>,</c->
+          <c- f>"Remaining issue"</c-><c- p>:</c-> <c- u>"Tactile adaptation requires additional review"</c->
+        <c- p>}</c->
+      <c- p>}</c->
+    <c- p>]</c->
+  <c- p>}</c->
+<c- p>}</c->
+</pre>
+   </div>
+   <h4 class="heading settled" data-level="4.5.3" id="provenance_workflow"><span class="secno">4.5.3. </span><span class="content">Review and workflow activities</span><a class="self-link" href="#provenance_workflow"></a></h4>
+   <p>The provenance chain is not limited to activities that create or modify graphic content. It can also record editorial reviews, accessibility evaluations, requests for changes, responses to feedback, approvals, and other steps in a publishing workflow. An activity may record what happened, who was involved, its rationale, and an informal <code>status</code>, without defining what a publisher is required to do next.</p>
+   <p>This is especially useful in combination with native JIM annotations, which are planned for a forthcoming version of this specification. Annotations will provide a way to associate review comments, suggested changes, and related feedback with a graphic or its constituent elements. The annotations can contain the comments themselves, while provenance entries can record activities such as adding annotations, reviewing the document, addressing feedback, or approving a revision. Native annotation support is not defined in this section.</p>
+   <p>JIM does not define or enforce a review workflow, require specific activity or status values, or determine whether an approval is valid or feedback has been resolved. External publishing and document-management systems may interpret these records and apply their own requirements.</p>
    <h3 class="heading settled" data-level="4.6" id="tags"><span class="secno">4.6. </span><span class="content">Tags</span><a class="self-link" href="#tags"></a></h3>
    <p>Tags are a way to categorize the file, either by the content, by the capabilities, or by a rating system, or some combination thereof.</p>
    <p>Tags are used to aid in filtering and searching for content.</p>
@@ -4365,7 +4671,8 @@ A blind user might wish to enable haptics and braille output when they are in a 
    <p>By defining a set of declarative syntaxes for different assistive technologies, including parameters and conditional execution triggers, this specification enables the user agent to provide the interactivity defined by the author, without compromising security. This specification refers to such declarative capabilities as "behaviors".</p>
    <h3 class="heading settled" data-level="13.4" id="privacy"><span class="secno">13.4. </span><span class="content">Privacy</span><a class="self-link" href="#privacy"></a></h3>
    <p>By enabling security through declarative behaviors, this specification ensures the privacy of the user from third parties. Note that data collection might still be performed through some primary user agents and content providers, but this should be done only with the user’s consent.</p>
-   <p>Provenance chain items can name individual people, and those names travel with the document wherever it is shared. Authors should obtain consent before naming individuals, or credit an <code>organization</code> alone.</p>
+   <p>Document provenance can identify the people who created or adapted a document; see <a href="#agent_reference">§ 4.5.2.5 Agent references</a> for guidance on consent and on omitting personal contact information.</p>
+   <p>Provenance activity <code>contributors</code> can identify individual people, and those details travel with the document wherever it is shared. Authors should obtain consent before including identifying or contact information, or credit an <code>organization</code> aas the contributor instead.</p>
    <h3 class="heading settled" data-level="13.5" id="portability"><span class="secno">13.5. </span><span class="content">Portability</span><a class="self-link" href="#portability"></a></h3>
    <p>Data visualizations can often lose their association with their context, including the article they were published in or the data they represent. This specification must define a way to include the raw data and the provenance in the image file, so the context can be preserved as the document is shared through various means.</p>
    <h3 class="heading settled" data-level="13.6" id="#reusability"><span class="secno">13.6. </span><span class="content">Reusability</span><a class="self-link" href="#%23reusability"></a></h3>
