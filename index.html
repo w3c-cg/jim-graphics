@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://w3c-cg.github.io/jim-graphics/" rel="canonical">
-  <meta content="190d35a018b1989805dbfb75a242b9dc5e7476f5" name="revision">
+  <meta content="cd2748fe96325f168459ae86458c8d100071ad3e" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2047,7 +2047,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p data-fill-with="logo"></p>
    <h1 class="no-ref p-name" id="title">JSON Image Metadata</h1>
    <h2 class="heading no-num no-ref no-toc settled" id="profile-and-date"><span class="content">Living Document,
-    <time class="dt-updated" datetime="2026-10-26">26 October 2026</time></span></h2>
+    <time class="dt-updated" datetime="2026-10-27">27 October 2026</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2067,7 +2067,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" height="15" src="https://licensebuttons.net/p/zero/1.0/80x15.png" width="80"></a>
 To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 26 October 2026,
+In addition, as of 27 October 2026,
 the editors have made this specification available under the
 <a href="https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at https://www.openwebfoundation.org/the-agreements/the-owf-1-0-agreements-granted-claims/owfa-1-0.
@@ -2173,7 +2173,7 @@ Parts of this work may be from another specification document.  If so, those par
           <li><a href="#source_data_block"><span class="secno">4.1.9.4</span> <span class="content">The <code>source</code> key</span></a>
           <li><a href="#license_object"><span class="secno">4.1.9.5</span> <span class="content">License objects</span></a>
          </ol>
-        <li><a href="#href_data_block"><span class="secno">4.1.10</span> <span class="content">The <code>href</code> key in a <code>datasets</code> block</span></a>
+        <li><a href="#external_data_key"><span class="secno">4.1.10</span> <span class="content">The <code>externalData</code> key in a <code>datasets</code> block</span></a>
        </ol>
       <li>
        <a href="#bindings"><span class="secno">4.2</span> <span class="content">Bindings</span></a>
@@ -2182,7 +2182,8 @@ Parts of this work may be from another specification document.  If so, those par
          <a href="#bindings_block"><span class="secno">4.2.1</span> <span class="content">The <code>bindings</code> block</span></a>
          <ol class="toc">
           <li><a href="#bindingname_data_block"><span class="secno">4.2.1.1</span> <span class="content">The <code>[binding-name]</code> key</span></a>
-          <li><a href="#binding_target"><span class="secno">4.2.1.2</span> <span class="content">Bindings as targets</span></a>
+          <li><a href="#binding_shapes"><span class="secno">4.2.1.2</span> <span class="content">Bindings using target shapes</span></a>
+          <li><a href="#binding_target"><span class="secno">4.2.1.3</span> <span class="content">Bindings as targets</span></a>
          </ol>
         <li>
          <a href="#inline_data"><span class="secno">4.2.2</span> <span class="content">Inline data</span></a>
@@ -2195,7 +2196,12 @@ Parts of this work may be from another specification document.  If so, those par
          </ol>
         <li><a href="#external_data_ref"><span class="secno">4.2.3</span> <span class="content">External data reference</span></a>
        </ol>
-      <li><a href="#external_files"><span class="secno">4.3</span> <span class="content">External files</span></a>
+      <li>
+       <a href="#external_files"><span class="secno">4.3</span> <span class="content">External JIM documents</span></a>
+       <ol class="toc">
+        <li><a href="#sidecar_filename"><span class="secno">4.3.1</span> <span class="content">Sidecar filename convention</span></a>
+        <li><a href="#sidecar_processing"><span class="secno">4.3.2</span> <span class="content">Sidecar processing</span></a>
+       </ol>
       <li>
        <a href="#behaviors"><span class="secno">4.4</span> <span class="content">Behaviors</span></a>
        <ol class="toc">
@@ -2251,8 +2257,9 @@ Parts of this work may be from another specification document.  If so, those par
         <li>
          <a href="#target_shapes"><span class="secno">5.1.3</span> <span class="content">Target shapes</span></a>
          <ol class="toc">
-          <li><a href="#target_shape_fill_stroke"><span class="secno">5.1.3.1</span> <span class="content">Target shape <code>fill</code> and <code>stroke</code></span></a>
-          <li><a href="#target_shape_keys"><span class="secno">5.1.3.2</span> <span class="content">Target shape keys</span></a>
+          <li><a href="#target_shape_coordinates"><span class="secno">5.1.3.1</span> <span class="content">Target shape coordinate systems</span></a>
+          <li><a href="#target_shape_fill_stroke"><span class="secno">5.1.3.2</span> <span class="content">Target shape <code>fill</code> and <code>stroke</code></span></a>
+          <li><a href="#target_shape_keys"><span class="secno">5.1.3.3</span> <span class="content">Target shape keys</span></a>
          </ol>
        </ol>
      </ol>
@@ -2390,12 +2397,13 @@ Note that version 0.3.0 of this specification is the first version to use Semant
 </div>
    <h3 class="heading settled" data-level="2.3" id="conform_doc"><span class="secno">2.3. </span><span class="content">Conforming document</span><a class="self-link" href="#conform_doc"></a></h3>
    <p>A document conforming to this specification must contain a metadata block that matches the schema defined in this specification, and must have at least one non-empty <code>datasets</code> block or one non-empty <code>behaviors</code> block.</p>
+   <p>For a graphic associated with a JIM sidecar, the required metadata is contained in the sidecar rather than in the image file.</p>
    <p>This specification assumes the format of the metadata is in a JSON object. Other conforming serializations are possible, such as XML or a binary format, as long as they adhere to the structure of the defined JSON schema, and can be serialized as JSON.</p>
    <p>A conforming document must provide a means to discover the metadata block.</p>
    <h4 class="heading settled" data-level="2.3.1" id="conform_doc_svg"><span class="secno">2.3.1. </span><span class="content">Conforming SVG document</span><a class="self-link" href="#conform_doc_svg"></a></h4>
    <p>In SVG, the metadata block must be the content of a <code>metadata</code> element with an attribute <code>data-type</code> with the attribute value <code>application/jim+json</code>, the MIME type for a JIM document.</p>
    <h4 class="heading settled" data-level="2.3.2" id="conform_doc_raster"><span class="secno">2.3.2. </span><span class="content">Conforming raster document</span><a class="self-link" href="#conform_doc_raster"></a></h4>
-   <p>For raster image documents, the JIM content block must be included in the metadata section of the raster image file.</p>
+   <p>For raster image documents, JIM metadata may be embedded in the image file’s metadata section or provided as an associated <a href="#external_files">JIM sidecar file</a>. When stored alongside the image, a sidecar should follow the <a href="#sidecar_filename">sidecar filename convention</a>.</p>
    <h3 class="heading settled" data-level="2.4" id="conform_imp"><span class="secno">2.4. </span><span class="content">Conforming implementation</span><a class="self-link" href="#conform_imp"></a></h3>
    <p>An implementation conforming to this specification must access the contents of the metadata block. For an SVG-capable implementation displaying an SVG document, a conforming implementation must read the JSON data in the indicated <code>metadata</code> element.</p>
    <p>A conforming implementation must provide a means for the end user to extract the contents of the <code>datasets</code> block.</p>
@@ -2472,6 +2480,7 @@ Note that version 0.3.0 of this specification is the first version to use Semant
   <c- p>}</c->
 <c- p>}</c->
 </pre>
+   <p>For example, a JSONPath selector for the first dataset’s first series is <code>$.datasets[0].series[0]</code> in the root form, and <code>$.jim.datasets[0].series[0]</code> in the enveloped form. Similarly, a selector for a named binding is <code>$.bindings.dp5</code> in the root form and <code>$.jim.bindings.dp5</code> in the enveloped form. Converting between forms therefore requires updating JSONPath selectors to match the resulting document structure.</p>
    <h2 class="heading settled" data-level="4" id="jim_block_defs"><span class="secno">4. </span><span class="content">JIM block definitions</span><a class="self-link" href="#jim_block_defs"></a></h2>
    <div class="note" role="note">
 Note that the examples below are notional, and intended for illustrative purposes. They are not a formal definition. The final definitions will be expressed in JSON Schema <a data-link-type="biblio" href="#biblio-json-schema" title="JSON Schema: A Media Type for Describing JSON Documents">[JSON-Schema]</a>, and will include data types for each block.
@@ -2487,8 +2496,6 @@ Note that the examples below are notional, and intended for illustrative purpose
   <c- f>"provenance"</c-><c- p>:</c-> <c- p>{</c->
   <c- p>},</c->
   <c- f>"tags"</c-><c- p>:</c-> <c- p>{</c->
-  <c- p>},</c->
-  <c- f>"href"</c-><c- p>:</c-> <c- p>{</c->
   <c- p>}</c->
 <c- p>}</c->
 </pre>
@@ -2506,8 +2513,8 @@ Note that the examples below are notional, and intended for illustrative purpose
    <p class="note" role="note"><span class="marker">Note:</span> Multiple datasets serve the use cases of: representing more than one type of chart in the same rendered chart, such as a line chart superimposed over a bar chart; representing multiple scales, such as a line chart with 2 series, each of which is on a different scale (e.g. where there are two y-axes, one on each side of the chart); dashboards with multiple charts, especially when two of the charts are closely related or show different aspects of the same data; and data that is comes from disparate sources or provenance.</p>
    <p class="note" role="note"><span class="marker">Note:</span> As a heuristic, if all of the facets (and sources) are identical between two or more datasets, they can be merged into a single dataset object; but if any of the facets (or sources) is different, they are better represented as different datasets.</p>
    <h4 class="heading settled" data-level="4.1.1" id="dataset_fidelity"><span class="secno">4.1.1. </span><span class="content">Fidelity in dataset representation</span><a class="self-link" href="#dataset_fidelity"></a></h4>
-   <p>A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the <code>datasets</code> block, including the bindings that tie a DOM representation to the JSONPath of the represented data.</p>
-   <p>A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format.</p>
+   <p>A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the <code>datasets</code> block, including the bindings that tie graphical regions to the JSONPath of the represented data.</p>
+   <p>A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format. For large datasets, producers should include the data needed to represent and interact with the graphic in JIM, while referencing the complete underlying dataset as an <a href="#external_data_ref">external data resource</a>.</p>
    <blockquote>
     <p>Not all graphical documents, especially those that show illustrations rather than structured charts, have an obvious or useful JSON representation. If no schema defined in this specification matches the type of graphics depicted in the document, then a JIM block can still be useful in providing the title, description, provenance, and other information.</p>
    </blockquote>
@@ -2549,7 +2556,7 @@ Note that the examples below are notional, and intended for illustrative purpose
    <p>Labels, descriptions, and other unstructured metadata may optionally be included in objects in the <code>items</code> key.</p>
    <h4 class="heading settled" data-level="4.1.3" id="ataset_keys"><span class="secno">4.1.3. </span><span class="content">Dataset keys</span><a class="self-link" href="#ataset_keys"></a></h4>
    <p>The notional dataset described in this specification includes exemplar entities which should be included in any inline dataset for optimal correlation to common graphical representation elements.</p>
-   <p>These entities include the <code>title</code>, <code>subtitle</code>, <code>description</code>, <code>representation</code>, <code>facets</code>, <code>series</code>, <code>items</code>, <code>source</code>, and <code>href</code> keys and their values.</p>
+   <p>These entities include the <code>title</code>, <code>subtitle</code>, <code>description</code>, <code>representation</code>, <code>facets</code>, <code>series</code>, <code>items</code>, <code>source</code>, and <code>externalData</code> keys and their values.</p>
    <table class="data">
     <thead>
      <tr>
@@ -2588,7 +2595,7 @@ Note that the examples below are notional, and intended for illustrative purpose
       <td>optional
      <tr>
       <td><code>facets</code>
-      <td>array
+      <td>object
       <td>Details of each facet in the dataset, such as x and y axes or legend keys, for structured and semi-structured data
       <td>optional for unstructured data, required for structured and semi-structured data
      <tr>
@@ -2607,9 +2614,9 @@ Note that the examples below are notional, and intended for illustrative purpose
       <td>The provenance of the dataset
       <td>optional
      <tr>
-      <td><code>href</code>
-      <td>array
-      <td>An array of objects containing links to relevant resources, such as the dataset in another format, or an extended dataset
+      <td><code>externalData</code>
+      <td>array of objects
+      <td>References to external data resources, such as the complete underlying dataset or an alternative data format
       <td>optional
    </table>
    <div class="example" id="xmp_dataset_structured">
@@ -2630,8 +2637,12 @@ An example of a <code>datasets</code> block (with elided values) for a structure
     <c- p>],</c->
     <c- f>"source"</c-><c- p>:</c-> <c- p>{</c->
     <c- p>},</c->
-    <c- f>"href"</c-><c- p>:</c-> <c- p>{</c->
-    <c- p>}</c->
+    <c- f>"externalData"</c-><c- p>:</c-> <c- p>[</c->
+      <c- p>{</c->
+        <c- f>"url"</c-><c- p>:</c-> <c- u>"https://example.org/data/full.csv"</c-><c- p>,</c->
+        <c- f>"type"</c-><c- p>:</c-> <c- u>"text/csv"</c->
+      <c- p>}</c->
+    <c- p>]</c->
   <c- p>}</c->
 <c- p>]</c->
 </pre>
@@ -3138,20 +3149,45 @@ An example of a <code>source</code> object citing a government data product.
       <td>A URI of the license text, such as the location of a custom license
       <td>optional
    </table>
-   <h4 class="heading settled" data-level="4.1.10" id="href_data_block"><span class="secno">4.1.10. </span><span class="content">The <code>href</code> key in a <code>datasets</code> block</span><a class="self-link" href="#href_data_block"></a></h4>
-   <p>The <code>href</code> key defines an object that refers to an external data file. The content model and processing of the <code>href</code> key are different in the <code>datasets</code> block than in other metadata blocks.</p>
-   <p>This external file can be used to tie data to graphical elements, as defined in <a href="#inline_data">Inline data</a>.</p>
+   <h4 class="heading settled" data-level="4.1.10" id="external_data_key"><span class="secno">4.1.10. </span><span class="content">The <code>externalData</code> key in a <code>datasets</code> block</span><a class="self-link" href="#external_data_key"></a></h4>
+   <p>The <code>externalData</code> key in a <code>datasets</code> entry contains an array of objects referencing external data resources, such as a complete underlying dataset or the dataset in another format. Each object has the following keys:</p>
+   <table class="data">
+    <thead>
+     <tr>
+      <th>key
+      <th>value type
+      <th>description
+      <th>requirement
+    <tbody>
+     <tr>
+      <td><code>url</code>
+      <td>URI string
+      <td>The location of the external data resource
+      <td>required
+     <tr>
+      <td><code>type</code>
+      <td>media type string
+      <td>The media type of the external data resource
+      <td>optional
+     <tr>
+      <td><code>description</code>
+      <td>non-empty string
+      <td>A description of the external resource and its relationship to the inline data, such as an explanation of how values were selected, aggregated, or derived
+      <td>optional
+   </table>
+   <p>These resource references are distinct from the external JIM metadata association described in <a href="#external_files">External JIM documents</a>.</p>
+   <p>The data used by JIM <a href="#bindings">bindings</a> should be included inline, rather than requiring retrieval of an external dataset.</p>
    <h3 class="heading settled" data-level="4.2" id="bindings"><span class="secno">4.2. </span><span class="content">Bindings</span><a class="self-link" href="#bindings"></a></h3>
-   <p>A binding is a declared association between one or more DOM elements and one or more locations in the JIM data. It is not a live or reactive data-binding mechanism.</p>
-   <p>In order to tie elements in the DOM of an SVG document to the JSON metadata, this specification uses CSS Selectors and JSONPath.</p>
-   <p>CSS Selectors <a data-link-type="biblio" href="#biblio-selectors-4" title="Selectors Level 4">[Selectors-4]</a> enables the matching of DOM nodes, such as graphical or textual elements.</p>
+   <p>A binding is a declared association between one or more regions of a graphic and one or more locations in the JIM data. These regions may be identified by DOM elements, shapes defined in JIM, or both. A binding is not a live or reactive data-binding mechanism.</p>
+   <p>This specification uses CSS Selectors, target shapes, and JSONPath to associate graphical regions with JSON metadata.</p>
+   <p>CSS Selectors <a data-link-type="biblio" href="#biblio-selectors-4" title="Selectors Level 4">[Selectors-4]</a> enable the matching of DOM nodes, such as graphical or textual elements.</p>
    <p>JSONPath <a data-link-type="biblio" href="#biblio-jsonpath" title="JSONPath: Query expressions for JSON">[JSONPath]</a> enables the matching of JSON keys or values in the JSON metadata. Conforming implementations must implement JSONPath (RFC 9535) semantics.</p>
    <blockquote>
     <p>TODO: include more details about bindings</p>
    </blockquote>
    <h4 class="heading settled" data-level="4.2.1" id="bindings_block"><span class="secno">4.2.1. </span><span class="content">The <code>bindings</code> block</span><a class="self-link" href="#bindings_block"></a></h4>
    <p>The <code>bindings</code> block is an object containing named bindings.</p>
-   <p>The <code>bindings</code> object contains one or more <code>[binding-name]</code> keys. A <code>[binding-name]</code> key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. <code>"title"</code>, <code>"bar-3"</code>, or <code>"axis_labels"</code>). Each <code>[binding-name]</code> is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the binding.</p>
+   <p>The <code>bindings</code> object contains one or more <code>[binding-name]</code> keys. A <code>[binding-name]</code> key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. <code>"title"</code>, <code>"bar-3"</code>, or <code>"axis_labels"</code>). Each <code>[binding-name]</code> is the key to an object which defines DOM selectors, target shapes, or both, along with JSONPath selectors and an optional descriptor for the binding.</p>
    <p>These <code>[binding-name]</code> keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each <code>[binding-name]</code> key must be a unique value.</p>
    <h5 class="heading settled" data-level="4.2.1.1" id="bindingname_data_block"><span class="secno">4.2.1.1. </span><span class="content">The <code>[binding-name]</code> key</span><a class="self-link" href="#bindingname_data_block"></a></h5>
    <table class="data">
@@ -3172,13 +3208,18 @@ An example of a <code>source</code> object citing a government data product.
     <tbody>
      <tr>
       <td><code>dom</code>
-      <td>A string of a valid CSS selector, or an array of strings of a valid CSS selectors
-      <td>The DOM selector (i.e. CSS selector) or selectors indicating a DOM element or set of elements that is the representation of a component of a JIM dataset.
-      <td>required
+      <td>A string of a valid CSS selector, or an array of strings of valid CSS selectors
+      <td>The DOM selector or selectors identifying elements representing a component of a JIM dataset.
+      <td>optional; at least one of <code>dom</code> or <code>shapes</code> is required
+     <tr>
+      <td><code>shapes</code>
+      <td>non-empty array of target shape objects
+      <td>One or more geometric regions representing a component of a JIM dataset, using the definitions in <a href="#target_shapes">Target shapes</a>.
+      <td>optional; at least one of <code>dom</code> or <code>shapes</code> is required
      <tr>
       <td><code>json</code>
-      <td>A string of a valid JSONPath selector, or an array of strings of a valid JSONPath selectors
-      <td>The JSONPath selector or selectors indicating a JIM key or set of JIM keys that is basis for the DOM representation.
+      <td>A string of a valid JSONPath selector, or an array of strings of valid JSONPath selectors
+      <td>The JSONPath selector or selectors identifying the JIM data represented by the selected DOM elements or defined shapes.
       <td>required
      <tr>
       <td><code>note</code>
@@ -3186,6 +3227,49 @@ An example of a <code>source</code> object citing a government data product.
       <td>A human-readable description of what the binding represents. This is informational only.
       <td>optional
    </table>
+   <p>A binding must contain a <code>json</code> key and at least one of <code>dom</code> or <code>shapes</code>. Both <code>dom</code> and <code>shapes</code> may be present in the same binding.</p>
+   <h5 class="heading settled" data-level="4.2.1.2" id="binding_shapes"><span class="secno">4.2.1.2. </span><span class="content">Bindings using target shapes</span><a class="self-link" href="#binding_shapes"></a></h5>
+   <p>The <code>shapes</code> key allows a binding to associate data with geometric regions defined in JIM rather than with existing DOM elements. It uses the same shape definitions and processing rules as the <a href="#target_shapes"><code>shapes</code> key in a behavior target</a>.</p>
+   <p>This is particularly useful for raster graphics, which do not expose their constituent graphical features as individually addressable DOM elements. A JIM viewer can generate the defined shapes as interactive regions over the raster image, allowing the regions to participate in data bindings and behaviors without modifying the image.</p>
+   <p>When a binding contains multiple shapes, they collectively represent the data identified by the binding’s <code>json</code> selector or selectors. If individual regions represent different data, they should be defined as separate bindings.</p>
+   <p>When both <code>dom</code> and <code>shapes</code> are present, they identify alternative or supplementary regions representing the same data. For example, a binding may identify an SVG element through <code>dom</code> while defining a larger interaction region through <code>shapes</code>.</p>
+   <p>All regions associated with a named binding constitute a single logical binding. Interaction with overlapping regions of the same binding must not cause duplicate behavior execution solely because more than one region was matched.</p>
+   <p>A conforming JIM viewer must make shape-based bindings available through the same non-pointer navigation and interaction mechanisms it provides for DOM-based bindings. This does not require each shape to be a separate focusable DOM element.</p>
+   <div class="example" id="xmp_binding_raster">
+    <a class="self-link" href="#xmp_binding_raster"></a>
+An example of bindings for two bars in an 800 × 600 raster chart. Each binding defines a rectangular interaction region over a bar and associates it with the corresponding inline data record.
+
+
+<pre class="highlight"><c- p>{</c->
+  <c- f>"bindings"</c-><c- p>:</c-> <c- p>{</c->
+    <c- f>"january"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"shapes"</c-><c- p>:</c-> <c- p>[</c->
+        <c- p>{</c->
+          <c- f>"element"</c-><c- p>:</c-> <c- u>"rect"</c-><c- p>,</c->
+          <c- f>"x"</c-><c- p>:</c-> <c- mi>80</c-><c- p>,</c->
+          <c- f>"y"</c-><c- p>:</c-> <c- mi>200</c-><c- p>,</c->
+          <c- f>"width"</c-><c- p>:</c-> <c- mi>50</c-><c- p>,</c->
+          <c- f>"height"</c-><c- p>:</c-> <c- mi>250</c->
+        <c- p>}</c->
+      <c- p>],</c->
+      <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[0].*"</c->
+    <c- p>},</c->
+    <c- f>"february"</c-><c- p>:</c-> <c- p>{</c->
+      <c- f>"shapes"</c-><c- p>:</c-> <c- p>[</c->
+        <c- p>{</c->
+          <c- f>"element"</c-><c- p>:</c-> <c- u>"rect"</c-><c- p>,</c->
+          <c- f>"x"</c-><c- p>:</c-> <c- mi>160</c-><c- p>,</c->
+          <c- f>"y"</c-><c- p>:</c-> <c- mi>150</c-><c- p>,</c->
+          <c- f>"width"</c-><c- p>:</c-> <c- mi>50</c-><c- p>,</c->
+          <c- f>"height"</c-><c- p>:</c-> <c- mi>300</c->
+        <c- p>}</c->
+      <c- p>],</c->
+      <c- f>"json"</c-><c- p>:</c-> <c- u>"$.datasets[0].series[0].records[1].*"</c->
+    <c- p>}</c->
+  <c- p>}</c->
+<c- p>}</c->
+</pre>
+   </div>
    <blockquote>
     <p>TODO: Maybe we could also add an option for a <code>class</code> key (with an array of strings as the value), so all bindings with a certain class can be addressed by target selectors?</p>
    </blockquote>
@@ -3244,8 +3328,8 @@ An example of a <code>bindings</code> block with two bindings with alternate syn
    <blockquote>
     <p>TODO: provide examples of one-to-many,  many-to-one, and  many-to-many bindings.</p>
    </blockquote>
-   <h5 class="heading settled" data-level="4.2.1.2" id="binding_target"><span class="secno">4.2.1.2. </span><span class="content">Bindings as targets</span><a class="self-link" href="#binding_target"></a></h5>
-   <p>The JSONPath for any given binding can be used as the value of a behavior <a href="#targets">target selector</a>.</p>
+   <h5 class="heading settled" data-level="4.2.1.3" id="binding_target"><span class="secno">4.2.1.3. </span><span class="content">Bindings as targets</span><a class="self-link" href="#binding_target"></a></h5>
+   <p>The JSONPath for any given binding can be used as the value of a behavior <a href="#targets">target selector</a>, whether the binding identifies DOM elements, target shapes, or both. When a behavior targets a binding, it applies to the graphical regions identified by that binding as a single logical target.</p>
    <div class="example" id="xmp_binding_behavior">
     <a class="self-link" href="#xmp_binding_behavior"></a>
 An example of a <code>bindings</code> block with one binding, and a <code>behaviors</code> block with an entry referencing that binding by its JSONPath.
@@ -3264,10 +3348,8 @@ An example of a <code>bindings</code> block with one binding, and a <code>behavi
         <c- f>"selector"</c-><c- p>:</c-> <c- u>"$.bindings.dp5"</c->
       <c- p>},</c->
       <c- f>"enter"</c-><c- p>:</c-> <c- p>{</c->
-        <c- p>{</c->
-          <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
-            <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>50</c-><c- p>,</c-> <c- mi>100</c-><c- p>,</c-> <c- mi>150</c-> <c- p>]</c->
-          <c- p>}</c->
+        <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
+          <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>50</c-><c- p>,</c-> <c- mi>100</c-><c- p>,</c-> <c- mi>150</c-> <c- p>]</c->
         <c- p>}</c->
       <c- p>}</c->
     <c- p>}</c->
@@ -3276,7 +3358,7 @@ An example of a <code>bindings</code> block with one binding, and a <code>behavi
 </pre>
    </div>
    <h4 class="heading settled" data-level="4.2.2" id="inline_data"><span class="secno">4.2.2. </span><span class="content">Inline data</span><a class="self-link" href="#inline_data"></a></h4>
-   <p>If a dataset is fairly small, it is best to include it in the image file directly.</p>
+   <p>The data necessary to represent and interact with a graphic should be included directly in its JIM metadata, whether embedded in the graphic or provided as a sidecar.</p>
    <h5 class="heading settled" data-level="4.2.2.1" id="tying_data"><span class="secno">4.2.2.1. </span><span class="content">Tying data and representational elements</span><a class="self-link" href="#tying_data"></a></h5>
    <p>Each data point in the raw data <code>may</code> be represented visually in the image. There are multiple benefits in providing a mechanism to tie a data point in the dataset to its representation, such as enabling users to drill down into the raw data value for a data element, or selecting a label in a different language than the graphical text label.</p>
    <p>This specification defines a <code>selector</code> attribute to enable this relationship between a graphical element and the data point it represents.</p>
@@ -3296,31 +3378,35 @@ An example of a <code>bindings</code> block with one binding, and a <code>behavi
     <p>TODO: cover rounding and precision in visual labels vs raw data</p>
    </blockquote>
    <h4 class="heading settled" data-level="4.2.3" id="external_data_ref"><span class="secno">4.2.3. </span><span class="content">External data reference</span><a class="self-link" href="#external_data_ref"></a></h4>
+   <p>For large datasets, producers should include the data necessary to represent and interact with the graphic directly in the JIM document, while providing a reference to the complete underlying dataset as an external resource through the dataset’s <a href="#external_data_key"><code>externalData</code> key</a>.</p>
+   <p>The inline data may consist of a subset of the external dataset, aggregated values, derived values, or a combination of these. It should contain sufficient information to support the graphic’s data bindings and intended interactions without requiring retrieval of the external dataset.</p>
+   <p>The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. When a graphic contains data bindings, those bindings resolve against data contained in the JIM document, not against resources referenced through <code>externalData</code>. Changes to an external dataset therefore do not silently change the data represented by existing bindings.</p>
+   <p>When inline values are derived from an external dataset, producers should provide sufficient information about the selection, aggregation, or transformation of the source data to explain the relationship between them.</p>
    <p class="note" role="note"><span class="marker">Note:</span> It might seem unintuitive to refer to data as metadata, but in the context of a graphics image file, the "data" of the file is the graphical elements that compose the file, while the raw data (the dataset) that is being represented is the metadata.</p>
-   <h3 class="heading settled" data-level="4.3" id="external_files"><span class="secno">4.3. </span><span class="content">External files</span><a class="self-link" href="#external_files"></a></h3>
-   <p>A metadata object can be inline in the file, or referenced as an external file, in whole or in part. There are several reasons to support external metadata files. Two major use cases include size restrictions and shared resources.</p>
-   <p>Size restrictions: While including the raw data in the image is a best practice, sometimes a dataset is simply too large to pragmatically include inline. In this case, referencing a raw data file is the best practical approach.</p>
-   <p>Shared resources: An author might wish to share a common metadata file or set of files for a set of image documents. This allows the metadata files to be updated independently, reduces duplication and file size, enables cacheing in the user agent, and allows for a modular approach with well-tested rules.</p>
-   <p>The <code>href</code> key defines an object that refers to an external file. This external file must be loaded by the user agent, and applied following the same processing rules as an inline metadata file, with the exception of the <code>datasets</code> block.</p>
-   <p>If an external metadata file contains rules that duplicate or conflict with rules defined in the inline metadata, the inline metadata takes precedence. This allows for customization of specific images while relying on generic common rules.</p>
-   <p>An <code>href</code> key <code>may</code> be included at any level of the metadata, with the relevant key string as the attribute key and a valid URL string as the value for that attribute.</p>
-<pre class="highlight"><c- p>{</c->
-  <c- f>"href"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"datasets"</c-><c- p>:</c-> <c- u>"https://path.to.datasets"</c-><c- p>,</c->
-    <c- f>"bindings"</c-><c- p>:</c-> <c- u>"https://path.to.bindings"</c-><c- p>,</c->
-    <c- f>"behaviors"</c-><c- p>:</c-> <c- u>"https://path.to.behaviors"</c-><c- p>,</c->
-    <c- f>"provenance"</c-><c- p>:</c-> <c- u>"https://path.to.provenance"</c-><c- p>,</c->
-    <c- f>"tags"</c-><c- p>:</c-> <c- u>"https://path.to.tags"</c-><c- p>,</c->
-  <c- p>}</c->
-<c- p>}</c->
+   <h3 class="heading settled" data-level="4.3" id="external_files"><span class="secno">4.3. </span><span class="content">External JIM documents</span><a class="self-link" href="#external_files"></a></h3>
+   <p>JIM metadata may be embedded within a graphic file or stored separately as an external JIM document, commonly called a <em>sidecar file</em>.</p>
+   <p>Sidecar files are particularly useful for raster images, such as PNG, JPEG, and WebP, where embedding structured metadata may be impractical or unsupported by existing authoring and viewing tools. A sidecar allows accessibility information, data bindings, behaviors, and provenance to be associated with an existing image without modifying the original file. For raster graphics, <a href="#target_shapes">target shapes</a> can define interactive regions corresponding to meaningful features that the image format does not expose as individually addressable elements.</p>
+   <h4 class="heading settled" data-level="4.3.1" id="sidecar_filename"><span class="secno">4.3.1. </span><span class="content">Sidecar filename convention</span><a class="self-link" href="#sidecar_filename"></a></h4>
+   <p>A JIM sidecar should use the complete filename of its associated image, including the image’s extension, followed by <code>.jim.json</code>.</p>
+   <p>For example:</p>
+<pre>photo.png
+photo.png.jim.json
+
+chart.jpg
+chart.jpg.jim.json
+
+diagram.webp
+diagram.webp.jim.json
 </pre>
-   <p>An additional <code>default</code> key is defined for referring to a single external metadata file that contains all the metadata blocks. This external file must be loaded by the user agent, and applied following the same processing rules as an inline metadata file.</p>
-<pre class="highlight"><c- p>{</c->
-  <c- f>"href"</c-><c- p>:</c-> <c- p>{</c->
-    <c- f>"default"</c-><c- p>:</c-> <c- u>"https://path.to.metadata"</c->
-  <c- p>}</c->
-<c- p>}</c->
-</pre>
+   <p>When a JIM sidecar is opened in a supporting viewer, the viewer should use this naming convention to locate the associated image in the same directory. If the image cannot be found, the viewer should provide a means for the user to locate it.</p>
+   <p>When a JIM-capable viewer opens an image that does not contain valid embedded JIM metadata, it should look for an associated sidecar using this filename convention. If a matching, valid sidecar is found, the viewer should use it as the JIM metadata for the image. If the image contains invalid embedded JIM metadata, the viewer should report the error, even if a valid sidecar is available, and may use the sidecar. If the sidecar cannot be found, the viewer should provide a means for the user to locate it.</p>
+   <p>This convention allows discovery in either direction without requiring the original image to contain a reference to JIM metadata. It does not require viewers to make unsolicited network requests to discover remote sidecars.</p>
+   <p>Other association mechanisms may be supported, including explicit references, package manifests, or application-defined mechanisms.</p>
+   <h4 class="heading settled" data-level="4.3.2" id="sidecar_processing"><span class="secno">4.3.2. </span><span class="content">Sidecar processing</span><a class="self-link" href="#sidecar_processing"></a></h4>
+   <p>A sidecar contains JIM metadata for its associated graphic and uses the same information model as embedded JIM metadata.</p>
+   <p>When a graphic has both embedded JIM metadata and an associated sidecar, a JIM viewer should use the embedded metadata when the graphic is opened directly. When a sidecar is opened directly, the viewer must use the metadata contained in that sidecar. A viewer may provide a means to select between embedded and sidecar metadata. The two representations must not be automatically merged.</p>
+   <p>An external JIM sidecar is not a mechanism for importing or merging individual metadata blocks from another JIM document. Its contents are processed as the JIM metadata associated with the graphic.</p>
+   <p>JIM documents may separately reference external resources, including datasets and media files. Such references are distinct from the association between an image and its JIM sidecar.</p>
    <h3 class="heading settled" data-level="4.4" id="behaviors"><span class="secno">4.4. </span><span class="content">Behaviors</span><a class="self-link" href="#behaviors"></a></h3>
    <p>A <code>behaviors</code> block is an array with the key <code>behaviors</code>, which contains one or more objects including at least a target (defined by the <code>target</code> key), and an <code>announcement</code> and/or an event type containing  one or more of the behaviors, including <code>haptic</code>, <code>audio</code>, <code>sonification</code>, <code>contrast</code>, and <code>tactile</code>.</p>
    <h4 class="heading settled" data-level="4.4.1" id="behavior_generators"><span class="secno">4.4.1. </span><span class="content">Behavior and conforming generators</span><a class="self-link" href="#behavior_generators"></a></h4>
@@ -3944,12 +4030,12 @@ This example records the creation of a graphic, the addition of JIM metadata, an
     <li data-md>
      <p><strong>An element selector</strong>: a CSS selector indicating a specific element or set of elements in the DOM of a SVG file;</p>
     <li data-md>
-     <p><strong>A binding selector</strong>: a JSONPath selector indicating a specific binding in the JIM of a SVG file;</p>
+     <p><strong>A binding selector</strong>: a JSONPath selector indicating a specific binding in the JIM metadata;</p>
     <li data-md>
      <p><strong>A</strong> <code>shapes</code> <strong>array</strong>: an array of objects that defines a shape to be dynamically represented in the diagram file.</p>
    </ol>
    <h3 class="heading settled" data-level="5.1" id="target_selector_key"><span class="secno">5.1. </span><span class="content">Target <code>selector</code> key</span><a class="self-link" href="#target_selector_key"></a></h3>
-   <p>A target may consist of a <code>selector</code> key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding.</p>
+   <p>A target may consist of a <code>selector</code> key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding, including a shape-based binding.</p>
    <h4 class="heading settled" data-level="5.1.1" id="target_element_selector"><span class="secno">5.1.1. </span><span class="content">Target <code>selector</code> for elements</span><a class="self-link" href="#target_element_selector"></a></h4>
    <p>An element target may be a textual element, a shape element, or a container element. If the selector target is a container element, the shape target is all targetable elements within that container, but not the bounding box of the container element itself.</p>
    <p>If the selector is not valid, or if the target element is not found, the <code>target</code> definition is ignored.</p>
@@ -4019,11 +4105,17 @@ An example of a <code>target</code> block with a <code>selector</code> key which
    <h4 class="heading settled" data-level="5.1.3" id="target_shapes"><span class="secno">5.1.3. </span><span class="content">Target shapes</span><a class="self-link" href="#target_shapes"></a></h4>
    <p>The <code>shapes</code> block is an array that contains a set of shapes that must be automatically generated by a conforming implementations and overlay in the top rendering layer of the document. These shapes must intercept pointer events, but must not be rendered by default.</p>
    <p>A conforming implementation, particularly a generator, may render a overlay shape, particularly on user request.</p>
-   <p class="note" role="note"><span class="marker">Note:</span> This feature is intended to enable drawing "invisible shapes" over areas of the image. Sample uses include creating larger hit-detection targets for small or fragmented graphical elements, grouping items, providing precision for overlaps, creating overlays for raster images that aren’t vectorized, or for any other purpose where you don’t want to rely on the native SVG hit detection for the graphical element. The intention is that these hidden shapes are isolated from the SVG itself, and are defined solely in the JSON metadata;the user agent dynamically generates these and inserts them into the DOM, keeps the source SVG file clean.</p>
-   <h5 class="heading settled" data-level="5.1.3.1" id="target_shape_fill_stroke"><span class="secno">5.1.3.1. </span><span class="content">Target shape <code>fill</code> and <code>stroke</code></span><a class="self-link" href="#target_shape_fill_stroke"></a></h5>
-   <p>The <code>fill</code> and <code>stroke</code> attributes control whether that shape’s fill or stroke area of that shape, respectively, must intercept pointer events. If the <code>fill</code> attribute is defined, the fill area of the shape must intercept pointer events. If the <code>stroke</code> attribute is defined, the stroke area of the shape, with a thickness defined by the <code>stroke-width</code> attribute, must intercept pointer events.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> This feature is intended to enable drawing "invisible shapes" over areas of the image. Sample uses include creating larger hit-detection targets for small or fragmented graphical elements, grouping items, providing precision for overlaps, creating overlays for raster images that aren’t vectorized, or for any other purpose where you don’t want to rely on the native SVG hit detection for the graphical element. The intention is that these hidden shapes are defined solely in the JSON metadata and dynamically generated by the user agent without modifying the original graphic.</p>
+   <h5 class="heading settled" data-level="5.1.3.1" id="target_shape_coordinates"><span class="secno">5.1.3.1. </span><span class="content">Target shape coordinate systems</span><a class="self-link" href="#target_shape_coordinates"></a></h5>
+   <p>Target shapes use the coordinate system of the graphic with which they are associated.</p>
+   <p>For SVG graphics, shape coordinates are expressed in the coordinate system of the root SVG viewport, using its <code>viewBox</code> coordinate system when present.</p>
+   <p>For raster graphics, shape coordinates are expressed relative to the image’s intrinsic pixel dimensions, with the origin at the upper-left corner. Coordinates are interpreted after applying any image orientation metadata, using the dimensions of the correctly oriented image. For example, a shape at coordinates <code>(100, 100)</code> in an 800 × 600 image refers to that position in the oriented image, regardless of its displayed dimensions.</p>
+   <p>When a graphic is scaled, positioned, or cropped, conforming implementations must apply the corresponding transformations to its target shapes so that the defined regions remain aligned with the represented graphical features.</p>
+   <p>Target shapes may be used directly within a behavior’s <code>target</code> object or within a named binding. The shape definitions and geometric interpretation are the same in both contexts.</p>
+   <h5 class="heading settled" data-level="5.1.3.2" id="target_shape_fill_stroke"><span class="secno">5.1.3.2. </span><span class="content">Target shape <code>fill</code> and <code>stroke</code></span><a class="self-link" href="#target_shape_fill_stroke"></a></h5>
+   <p>The <code>fill</code> and <code>stroke</code> attributes determine which regions of a target shape intercept pointer events. If neither attribute is specified, the fill area must intercept pointer events by default. If only <code>fill</code> is specified, only the fill area must intercept pointer events. If only <code>stroke</code> is specified, only the stroke area must intercept pointer events, with a thickness defined by <code>stroke-width</code>. If both are specified, both areas must intercept pointer events. These hit-detection rules do not require the shapes to be visibly rendered.</p>
    <p>If the values of the <code>fill</code> or <code>stroke</code> attributes are valid color definitions, and a conforming implementation is rendering the overlay shape, the implemention should render that overlay shape with the colors defined.</p>
-   <h5 class="heading settled" data-level="5.1.3.2" id="target_shape_keys"><span class="secno">5.1.3.2. </span><span class="content">Target shape keys</span><a class="self-link" href="#target_shape_keys"></a></h5>
+   <h5 class="heading settled" data-level="5.1.3.3" id="target_shape_keys"><span class="secno">5.1.3.3. </span><span class="content">Target shape keys</span><a class="self-link" href="#target_shape_keys"></a></h5>
    <p>A <code>shapes</code> block is an array of objects, each of which contains a set of keys representing the shape <code>element</code> (the SVG shape element tag name) and the required attributes. The definitive list of shapes is defined by the SVG 2.0 <a data-link-type="biblio" href="#biblio-svg2" title="Scalable Vector Graphics (SVG) 2">[SVG2]</a> specification. All SVG shape elements are valid.</p>
    <p>Any attributes not defined by the target shape definition default to the SVG lacunae values for that attribute. Any attributes with attribute values not conforming to the SVG 2.0 specification must be discarded.</p>
    <table class="data">
@@ -4128,7 +4220,8 @@ A target describing a hexagonal area using the <code>path</code> definition and 
    <p>Announcements may be implicit or explicit. Explicit <code>announcement</code> blocks must be defined in the top level of the <code>behavior</code> object, not in an event block.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The motivation for separating announcments from other behaviors in deliberate. Announcements are fundamental and universal to all graphical document types, and are intended to be triggered by user-agent-specific mechanisms, while other behaviors are specific to particular graphical documents or document types, and require authorial intent.</p>
    <h3 class="heading settled" data-level="6.1" id="implicit_announcements"><span class="secno">6.1. </span><span class="content">Implicit (default) announcements</span><a class="self-link" href="#implicit_announcements"></a></h3>
-   <p>By default, a conforming JIM viewer must generate an implicit announcement <code>name</code> for any element identified by a <code>dom</code> selector that has a valid <code>json</code> JSONPath selector that resolves to an endpoint (i.e., a <code>location</code> per the JSONPath specification), triggered as for the <code>enter</code> event.</p>
+   <p>By default, a conforming JIM viewer must generate an implicit announcement <code>name</code> for any binding that has a valid <code>json</code> JSONPath selector that resolves to an endpoint (i.e., a <code>location</code> per the JSONPath specification) and identifies at least one graphical region through <code>dom</code> or <code>shapes</code>. The announcement is triggered as for the <code>enter</code> event.</p>
+   <p>The implicit announcement is associated with the logical binding, regardless of whether its graphical regions are identified by DOM selectors, target shapes, or both.</p>
    <p>For each valid JSONPath endpoint that resolves to a key-value pair, the default announcement must be the text of the value.</p>
    <p>For each valid JSONPath endpoint that resolves to an object, the default announcement must be the text of each value that is a direct child of the object, as a comma-separated list.</p>
    <p>For each valid JSONPath endpoint that resolves to an wildcard (<code>*</code>), the default announcement must be the text of each value that matches the wildcard, as a comma-separated list.</p>
@@ -4521,7 +4614,7 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
 <pre class="highlight"><c- p>{</c->
   <c- f>"haptic"</c-><c- p>:</c-> <c- p>{</c->
     <c- f>"durations"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>200</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>200</c-><c- p>,</c-> <c- mi>350</c-><c- p>,</c-> <c- mi>150</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>100</c-> <c- p>],</c->
-    <c- f>"intensities"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> .<c- mi>5</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> .<c- mi>3</c-> <c- p>],</c->
+    <c- f>"intensities"</c-><c- p>:</c-> <c- p>[</c-> <c- mi>0</c-><c- p>,</c-> <c- mf>0.5</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mi>1</c-><c- p>,</c-> <c- mi>0</c-><c- p>,</c-> <c- mf>0.3</c-> <c- p>]</c->
   <c- p>}</c->
 <c- p>}</c->
 </pre>
@@ -4640,7 +4733,7 @@ Device capabilities….
    <p class="note" role="note"><span class="marker">Note:</span> The SVG 2.0 specification is not yet approved, and has not yet reached W3C Recommentation status.</p>
    <p>Parts of it are implemented in browsers and other user agents, but some validation tools might still flag non-XML content in the <code>metadata</code> element as a violation. This might impact some organizational requirements that all HTML or SVG documents are required to pass validation in order to be accessible. These tools <span class="allow-2119">should</span> be urged to update to the SVG 2.0 specification for processing the <code>metadata</code> element.</p>
    <p>It is important to note that currently, SVG does not define a processing algorithm or behavior for metadata. A user agent <code>may</code> process the metadata in any manner it supports. Currently, no general purpose web browser processes the contents of the <code>metadata</code> element.</p>
-   <p>Because the SVG <code>metadata</code> element does not have any defined attributes (such as an <code>href</code> attribute), there is no defined way to link to external resources; this contrasts with the <code>style</code> element in SVG, which can contain CSS rules as the child content of the element, or can reference external CSS files through the <code>href</code> attribute. Thus, this specification defines a linking syntax to allow external metadata files to be applied in whole or in part to the referring image document.</p>
+   <p>SVG documents can include JIM directly in the <code>metadata</code> element. An external <a href="#external_files">JIM sidecar</a> is primarily useful when metadata cannot conveniently be embedded in the graphic, particularly for raster images. JIM does not define a general-purpose mechanism for importing individual blocks of external JIM metadata.</p>
    <h3 class="heading settled" data-level="12.2" id="css"><span class="secno">12.2. </span><span class="content">Cascading Style Sheets (CSS)</span><a class="self-link" href="#css"></a></h3>
    <p>Some features of this specification, such as contrast control, overlap with capabilities of CSS, such as the <code>prefers-high-contrast</code> media query. This specification is designed to complement and extend such capabilities.</p>
    <h4 class="heading settled" data-level="12.2.1" id="css_format"><span class="secno">12.2.1. </span><span class="content">CSS format</span><a class="self-link" href="#css_format"></a></h4>

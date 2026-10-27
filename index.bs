@@ -81,6 +81,8 @@ Note that version 0.3.0 of this specification is the first version to use Semant
 
 A document conforming to this specification must contain a metadata block that matches the schema defined in this specification, and must have at least one non-empty `datasets` block or one non-empty `behaviors` block.
 
+For a graphic associated with a JIM sidecar, the required metadata is contained in the sidecar rather than in the image file.
+
 This specification assumes the format of the metadata is in a JSON object. Other conforming serializations are possible, such as XML or a binary format, as long as they adhere to the structure of the defined JSON schema, and can be serialized as JSON.
 
 A conforming document must provide a means to discover the metadata block.
@@ -91,7 +93,7 @@ In SVG, the metadata block must be the content of a `metadata` element with an a
 
 ### Conforming raster document ### {#conform_doc_raster}
 
-For raster image documents, the JIM content block must be included in the metadata section of the raster image file.
+For raster image documents, JIM metadata may be embedded in the image file's metadata section or provided as an associated [JIM sidecar file](#external_files). When stored alongside the image, a sidecar should follow the [sidecar filename convention](#sidecar_filename).
 
 ## Conforming implementation ## {#conform_imp}
 
@@ -195,7 +197,7 @@ Enveloped form:
 }
 </xmp>
 
-
+For example, a JSONPath selector for the first dataset's first series is `$.datasets[0].series[0]` in the root form, and `$.jim.datasets[0].series[0]` in the enveloped form. Similarly, a selector for a named binding is `$.bindings.dp5` in the root form and `$.jim.bindings.dp5` in the enveloped form. Converting between forms therefore requires updating JSONPath selectors to match the resulting document structure.
 
 
 # JIM block definitions # {#jim_block_defs} 
@@ -217,8 +219,6 @@ This vocabulary is defined in terms of "blocks", or objects identified by a key 
   "provenance": {
   },
   "tags": {
-  },
-  "href": {
   }
 }
 </xmp>
@@ -246,9 +246,9 @@ Note: As a heuristic, if all of the facets (and sources) are identical between t
 
 ### Fidelity in dataset representation ### {#dataset_fidelity}
 
-A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the `datasets` block, including the bindings that tie a DOM representation to the JSONPath of the represented data.
+A document conforming to this specification must maintain an accurate visual and/or structural representation of the dataset specified in the `datasets` block, including the bindings that tie graphical regions to the JSONPath of the represented data.
 
-A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format.
+A conforming graphical document which represents structured data must also contain the corresponding dataset in JSON or must link to the dataset in some other format. For large datasets, producers should include the data needed to represent and interact with the graphic in JIM, while referencing the complete underlying dataset as an [external data resource](#external_data_ref).
 
 > Not all graphical documents, especially those that show illustrations rather than structured charts, have an obvious or useful JSON representation. If no schema defined in this specification matches the type of graphics depicted in the document, then a JIM block can still be useful in providing the title, description, provenance, and other information.
 
@@ -312,7 +312,7 @@ Labels, descriptions, and other unstructured metadata may optionally be included
 
 The notional dataset described in this specification includes exemplar entities which should be included in any inline dataset for optimal correlation to common graphical representation elements.
 
-These entities include the `title`, `subtitle`, `description`, `representation`, `facets`, `series`, `items`, `source`, and `href` keys and their values.
+These entities include the `title`, `subtitle`, `description`, `representation`, `facets`, `series`, `items`, `source`, and `externalData` keys and their values.
 
 <table class="data">
   <thead>
@@ -358,7 +358,7 @@ These entities include the `title`, `subtitle`, `description`, `representation`,
     </tr>
     <tr>
       <td>`facets`</td>
-      <td>array</td>
+      <td>object</td>
       <td>Details of each facet in the dataset, such as x and y axes or legend keys, for structured and semi-structured data</td>
       <td>optional for unstructured data, required for structured and semi-structured data</td>
     </tr>
@@ -381,9 +381,9 @@ These entities include the `title`, `subtitle`, `description`, `representation`,
       <td>optional</td>
     </tr>
     <tr>
-      <td>`href`</td>
-      <td>array</td>
-      <td>An array of objects containing links to relevant resources, such as the dataset in another format, or an extended dataset</td>
+      <td>`externalData`</td>
+      <td>array of objects</td>
+      <td>References to external data resources, such as the complete underlying dataset or an alternative data format</td>
       <td>optional</td>
     </tr>
   </tbody>
@@ -407,8 +407,12 @@ An example of a `datasets` block (with elided values) for a structured data repr
     ],
     "source": {
     },
-    "href": {
-    }
+    "externalData": [
+      {
+        "url": "https://example.org/data/full.csv",
+        "type": "text/csv"
+      }
+    ]
   }
 ]
 </xmp>
@@ -1095,11 +1099,44 @@ A license object identifies the license that applies to a resource or contributi
   </tbody>
 </table>
 
-### The `href` key in a `datasets` block ### {#href_data_block}
+### The `externalData` key in a `datasets` block ### {#external_data_key}
 
-The `href` key defines an object that refers to an external data file. The content model and processing of the `href` key are different in the `datasets` block than in other metadata blocks.
+The `externalData` key in a `datasets` entry contains an array of objects referencing external data resources, such as a complete underlying dataset or the dataset in another format. Each object has the following keys:
 
-This external file can be used to tie data to graphical elements, as defined in [Inline data](#inline_data).
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`url`</td>
+      <td>URI string</td>
+      <td>The location of the external data resource</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`type`</td>
+      <td>media type string</td>
+      <td>The media type of the external data resource</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`description`</td>
+      <td>non-empty string</td>
+      <td>A description of the external resource and its relationship to the inline data, such as an explanation of how values were selected, aggregated, or derived</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+These resource references are distinct from the external JIM metadata association described in [External JIM documents](#external_files).
+
+The data used by JIM [bindings](#bindings) should be included inline, rather than requiring retrieval of an external dataset.
 
 
 
@@ -1108,11 +1145,11 @@ This external file can be used to tie data to graphical elements, as defined in 
 ## Bindings ## {#bindings}
 
 
-A binding is a declared association between one or more DOM elements and one or more locations in the JIM data. It is not a live or reactive data-binding mechanism.
+A binding is a declared association between one or more regions of a graphic and one or more locations in the JIM data. These regions may be identified by DOM elements, shapes defined in JIM, or both. A binding is not a live or reactive data-binding mechanism.
 
-In order to tie elements in the DOM of an SVG document to the JSON metadata, this specification uses CSS Selectors and JSONPath.
+This specification uses CSS Selectors, target shapes, and JSONPath to associate graphical regions with JSON metadata.
 
-CSS Selectors [[Selectors-4]] enables the matching of DOM nodes, such as graphical or textual elements.
+CSS Selectors [[Selectors-4]] enable the matching of DOM nodes, such as graphical or textual elements.
 
 JSONPath [[JSONPath]] enables the matching of JSON keys or values in the JSON metadata. Conforming implementations must implement JSONPath (RFC 9535) semantics.
 
@@ -1124,7 +1161,7 @@ JSONPath [[JSONPath]] enables the matching of JSON keys or values in the JSON me
 
 The `bindings` block is an object containing named bindings.  
 
-The `bindings` object contains one or more `[binding-name]` keys. A `[binding-name]` key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. `"title"`, `"bar-3"`, or `"axis_labels"`). Each `[binding-name]` is the key to an object which defines the DOM selectors, JSONPath selectors, and optional descriptor for the binding.
+The `bindings` object contains one or more `[binding-name]` keys. A `[binding-name]` key may be any value allowed by the schema for the representation type, and will normally represent a human-readable identifier for the binding (e.g. `"title"`, `"bar-3"`, or `"axis_labels"`). Each `[binding-name]` is the key to an object which defines DOM selectors, target shapes, or both, along with JSONPath selectors and an optional descriptor for the binding.
 
 These `[binding-name]` keys must consist of a string of ASCII letters, digits, and '_', and '-', with no whitespace. Each `[binding-name]` key must be a unique value.
 
@@ -1150,14 +1187,20 @@ These `[binding-name]` keys must consist of a string of ASCII letters, digits, a
   <tbody>
     <tr>
       <td>`dom`</td>
-      <td>A string of a valid CSS selector, or an array of strings of a valid CSS selectors</td>
-      <td>The DOM selector (i.e. CSS selector) or selectors indicating a DOM element or set of elements that is the representation of a component of a JIM dataset.</td>
-      <td>required</td>
+      <td>A string of a valid CSS selector, or an array of strings of valid CSS selectors</td>
+      <td>The DOM selector or selectors identifying elements representing a component of a JIM dataset.</td>
+      <td>optional; at least one of `dom` or `shapes` is required</td>
+    </tr>
+    <tr>
+      <td>`shapes`</td>
+      <td>non-empty array of target shape objects</td>
+      <td>One or more geometric regions representing a component of a JIM dataset, using the definitions in [Target shapes](#target_shapes).</td>
+      <td>optional; at least one of `dom` or `shapes` is required</td>
     </tr>
     <tr>
       <td>`json`</td>
-      <td>A string of a valid JSONPath selector, or an array of strings of a valid JSONPath selectors</td>
-      <td>The JSONPath selector or selectors indicating a JIM key or set of JIM keys that is basis for the DOM representation.</td>
+      <td>A string of a valid JSONPath selector, or an array of strings of valid JSONPath selectors</td>
+      <td>The JSONPath selector or selectors identifying the JIM data represented by the selected DOM elements or defined shapes.</td>
       <td>required</td>
     </tr>
     <tr>
@@ -1168,6 +1211,57 @@ These `[binding-name]` keys must consist of a string of ASCII letters, digits, a
     </tr>
   </tbody>
 </table>
+
+A binding must contain a `json` key and at least one of `dom` or `shapes`. Both `dom` and `shapes` may be present in the same binding.
+
+#### Bindings using target shapes #### {#binding_shapes}
+
+The `shapes` key allows a binding to associate data with geometric regions defined in JIM rather than with existing DOM elements. It uses the same shape definitions and processing rules as the [`shapes` key in a behavior target](#target_shapes).
+
+This is particularly useful for raster graphics, which do not expose their constituent graphical features as individually addressable DOM elements. A JIM viewer can generate the defined shapes as interactive regions over the raster image, allowing the regions to participate in data bindings and behaviors without modifying the image.
+
+When a binding contains multiple shapes, they collectively represent the data identified by the binding's `json` selector or selectors. If individual regions represent different data, they should be defined as separate bindings.
+
+When both `dom` and `shapes` are present, they identify alternative or supplementary regions representing the same data. For example, a binding may identify an SVG element through `dom` while defining a larger interaction region through `shapes`.
+
+All regions associated with a named binding constitute a single logical binding. Interaction with overlapping regions of the same binding must not cause duplicate behavior execution solely because more than one region was matched.
+
+A conforming JIM viewer must make shape-based bindings available through the same non-pointer navigation and interaction mechanisms it provides for DOM-based bindings. This does not require each shape to be a separate focusable DOM element.
+
+<div id='xmp_binding_raster' class='example'>
+An example of bindings for two bars in an 800 × 600 raster chart. Each binding defines a rectangular interaction region over a bar and associates it with the corresponding inline data record.
+
+<xmp highlight='json'>
+{
+  "bindings": {
+    "january": {
+      "shapes": [
+        {
+          "element": "rect",
+          "x": 80,
+          "y": 200,
+          "width": 50,
+          "height": 250
+        }
+      ],
+      "json": "$.datasets[0].series[0].records[0].*"
+    },
+    "february": {
+      "shapes": [
+        {
+          "element": "rect",
+          "x": 160,
+          "y": 150,
+          "width": 50,
+          "height": 300
+        }
+      ],
+      "json": "$.datasets[0].series[0].records[1].*"
+    }
+  }
+}
+</xmp>
+</div>
 
 > TODO: Maybe we could also add an option for a `class` key (with an array of strings as the value), so all bindings with a certain class can be addressed by target selectors?
 
@@ -1235,7 +1329,7 @@ Assuming a record structure with only `x` and `y` keys, these bindings would yie
 
 #### Bindings as targets #### {#binding_target}
 
-The JSONPath for any given binding can be used as the value of a behavior [target selector](#targets).
+The JSONPath for any given binding can be used as the value of a behavior [target selector](#targets), whether the binding identifies DOM elements, target shapes, or both. When a behavior targets a binding, it applies to the graphical regions identified by that binding as a single logical target.
 
 
 <div id='xmp_binding_behavior' class='example'>
@@ -1255,10 +1349,8 @@ An example of a `bindings` block with one binding, and a `behaviors` block with 
         "selector": "$.bindings.dp5"
       },
       "enter": {
-        {
-          "haptic": {
-            "durations": [ 50, 100, 150 ]
-          }
+        "haptic": {
+          "durations": [ 50, 100, 150 ]
         }
       }
     }
@@ -1271,7 +1363,7 @@ An example of a `bindings` block with one binding, and a `behaviors` block with 
 
 ### Inline data ### {#inline_data}
 
-If a dataset is fairly small, it is best to include it in the image file directly.
+The data necessary to represent and interact with a graphic should be included directly in its JIM metadata, whether embedded in the graphic or provided as a sidecar.
 
 #### Tying data and representational elements #### {#tying_data}
 
@@ -1309,44 +1401,57 @@ Note:  We might define specific formats for chart data, but this could be comple
 
 ### External data reference ### {#external_data_ref}
 
+For large datasets, producers should include the data necessary to represent and interact with the graphic directly in the JIM document, while providing a reference to the complete underlying dataset as an external resource through the dataset's [`externalData` key](#external_data_key).
+
+The inline data may consist of a subset of the external dataset, aggregated values, derived values, or a combination of these. It should contain sufficient information to support the graphic's data bindings and intended interactions without requiring retrieval of the external dataset.
+
+The external dataset may provide additional detail, support independent analysis, or enable interactions that require data beyond what is represented in the graphic. Consumers may retrieve the external dataset when needed, but are not required to do so to process the inline data. When a graphic contains data bindings, those bindings resolve against data contained in the JIM document, not against resources referenced through `externalData`. Changes to an external dataset therefore do not silently change the data represented by existing bindings.
+
+When inline values are derived from an external dataset, producers should provide sufficient information about the selection, aggregation, or transformation of the source data to explain the relationship between them.
+
 Note: It might seem unintuitive to refer to data as metadata, but in the context of a graphics image file, the "data" of the file is the graphical elements that compose the file, while the raw data (the dataset) that is being represented is the metadata.
 
 
-## External files ## {#external_files}
+## External JIM documents ## {#external_files}
 
-A metadata object can be inline in the file, or referenced as an external file, in whole or in part. There are several reasons to support external metadata files. Two major use cases include size restrictions and shared resources.
+JIM metadata may be embedded within a graphic file or stored separately as an external JIM document, commonly called a *sidecar file*.
 
-Size restrictions: While including the raw data in the image is a best practice, sometimes a dataset is simply too large to pragmatically include inline. In this case, referencing a raw data file is the best practical approach.
+Sidecar files are particularly useful for raster images, such as PNG, JPEG, and WebP, where embedding structured metadata may be impractical or unsupported by existing authoring and viewing tools. A sidecar allows accessibility information, data bindings, behaviors, and provenance to be associated with an existing image without modifying the original file. For raster graphics, [target shapes](#target_shapes) can define interactive regions corresponding to meaningful features that the image format does not expose as individually addressable elements.
 
-Shared resources: An author might wish to share a common metadata file or set of files for a set of image documents. This allows the metadata files to be updated independently, reduces duplication and file size, enables cacheing in the user agent, and allows for a modular approach with well-tested rules.
+### Sidecar filename convention ### {#sidecar_filename}
 
-The `href` key defines an object that refers to an external file. This external file must be loaded by the user agent, and applied following the same processing rules as an inline metadata file, with the exception of the `datasets` block.
+A JIM sidecar should use the complete filename of its associated image, including the image's extension, followed by `.jim.json`.
 
-If an external metadata file contains rules that duplicate or conflict with rules defined in the inline metadata, the inline metadata takes precedence. This allows for customization of specific images while relying on generic common rules.
+For example:
 
-An `href` key `may` be included at any level of the metadata, with the relevant key string as the attribute key and a valid URL string as the value for that attribute.
+<pre>
+photo.png
+photo.png.jim.json
 
-<xmp highlight='json'>
-{
-  "href": {
-    "datasets": "https://path.to.datasets",
-    "bindings": "https://path.to.bindings",
-    "behaviors": "https://path.to.behaviors",
-    "provenance": "https://path.to.provenance",
-    "tags": "https://path.to.tags",
-  }
-}
-</xmp>
+chart.jpg
+chart.jpg.jim.json
 
-An additional `default` key is defined for referring to a single external metadata file that contains all the metadata blocks. This external file must be loaded by the user agent, and applied following the same processing rules as an inline metadata file.
+diagram.webp
+diagram.webp.jim.json
+</pre>
 
-<xmp highlight='json'>
-{
-  "href": {
-    "default": "https://path.to.metadata"
-  }
-}
-</xmp>
+When a JIM sidecar is opened in a supporting viewer, the viewer should use this naming convention to locate the associated image in the same directory. If the image cannot be found, the viewer should provide a means for the user to locate it.
+
+When a JIM-capable viewer opens an image that does not contain valid embedded JIM metadata, it should look for an associated sidecar using this filename convention. If a matching, valid sidecar is found, the viewer should use it as the JIM metadata for the image. If the image contains invalid embedded JIM metadata, the viewer should report the error, even if a valid sidecar is available, and may use the sidecar. If the sidecar cannot be found, the viewer should provide a means for the user to locate it.
+
+This convention allows discovery in either direction without requiring the original image to contain a reference to JIM metadata. It does not require viewers to make unsolicited network requests to discover remote sidecars.
+
+Other association mechanisms may be supported, including explicit references, package manifests, or application-defined mechanisms.
+
+### Sidecar processing ### {#sidecar_processing}
+
+A sidecar contains JIM metadata for its associated graphic and uses the same information model as embedded JIM metadata.
+
+When a graphic has both embedded JIM metadata and an associated sidecar, a JIM viewer should use the embedded metadata when the graphic is opened directly. When a sidecar is opened directly, the viewer must use the metadata contained in that sidecar. A viewer may provide a means to select between embedded and sidecar metadata. The two representations must not be automatically merged.
+
+An external JIM sidecar is not a mechanism for importing or merging individual metadata blocks from another JIM document. Its contents are processed as the JIM metadata associated with the graphic.
+
+JIM documents may separately reference external resources, including datasets and media files. Such references are distinct from the association between an image and its JIM sidecar.
 
 
 ## Behaviors ## {#behaviors}
@@ -2171,12 +2276,12 @@ A target is an area of an diagram image that is associated with a particular beh
 Targets may consist of one of three possible values:
 
 1. **An element selector**: a CSS selector indicating a specific element or set of elements in the DOM of a SVG file;
-2. **A binding selector**: a JSONPath selector indicating a specific binding in the JIM of a SVG file;
+2. **A binding selector**: a JSONPath selector indicating a specific binding in the JIM metadata;
 3. **A** `shapes` **array**: an array of objects that defines a shape to be dynamically represented in the diagram file.
 
 ## Target `selector` key ## {#target_selector_key}
 
-A target may consist of a `selector` key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding. 
+A target may consist of a `selector` key with a valid selector, either a DOM selector pointing to one or more elements in the DOM of an SVG file, or a JSONPath selector pointing to a binding, including a shape-based binding. 
 
 ### Target `selector` for elements ### {#target_element_selector}
 
@@ -2259,12 +2364,24 @@ The `shapes` block is an array that contains a set of shapes that must be automa
 
 A conforming implementation, particularly a generator, may render a overlay shape, particularly on user request.
 
-Note: This feature is intended to enable drawing "invisible shapes" over areas of the image. Sample uses include creating larger hit-detection targets for small or fragmented graphical elements, grouping items, providing precision for overlaps, creating overlays for raster images that aren't vectorized, or for any other purpose where you don't want to rely on the native SVG hit detection for the graphical element. The intention is that these hidden shapes are isolated from the SVG itself, and are defined solely in the JSON metadata;the user agent dynamically generates these and inserts them into the DOM, keeps the source SVG file clean.
+Note: This feature is intended to enable drawing "invisible shapes" over areas of the image. Sample uses include creating larger hit-detection targets for small or fragmented graphical elements, grouping items, providing precision for overlaps, creating overlays for raster images that aren't vectorized, or for any other purpose where you don't want to rely on the native SVG hit detection for the graphical element. The intention is that these hidden shapes are defined solely in the JSON metadata and dynamically generated by the user agent without modifying the original graphic.
 
+
+#### Target shape coordinate systems #### {#target_shape_coordinates}
+
+Target shapes use the coordinate system of the graphic with which they are associated.
+
+For SVG graphics, shape coordinates are expressed in the coordinate system of the root SVG viewport, using its `viewBox` coordinate system when present.
+
+For raster graphics, shape coordinates are expressed relative to the image's intrinsic pixel dimensions, with the origin at the upper-left corner. Coordinates are interpreted after applying any image orientation metadata, using the dimensions of the correctly oriented image. For example, a shape at coordinates `(100, 100)` in an 800 × 600 image refers to that position in the oriented image, regardless of its displayed dimensions.
+
+When a graphic is scaled, positioned, or cropped, conforming implementations must apply the corresponding transformations to its target shapes so that the defined regions remain aligned with the represented graphical features.
+
+Target shapes may be used directly within a behavior's `target` object or within a named binding. The shape definitions and geometric interpretation are the same in both contexts.
 
 #### Target shape `fill` and `stroke` #### {#target_shape_fill_stroke}
 
-The `fill` and `stroke` attributes control whether that shape's fill or stroke area of that shape, respectively, must intercept pointer events. If the `fill` attribute is defined, the fill area of the shape must intercept pointer events. If the `stroke` attribute is defined, the stroke area of the shape, with a thickness defined by the `stroke-width` attribute, must intercept pointer events.
+The `fill` and `stroke` attributes determine which regions of a target shape intercept pointer events. If neither attribute is specified, the fill area must intercept pointer events by default. If only `fill` is specified, only the fill area must intercept pointer events. If only `stroke` is specified, only the stroke area must intercept pointer events, with a thickness defined by `stroke-width`. If both are specified, both areas must intercept pointer events. These hit-detection rules do not require the shapes to be visibly rendered.
 
 If the values of the `fill` or `stroke` attributes are valid color definitions, and a conforming implementation is rendering the overlay shape, the implemention should render that overlay shape with the colors defined.
 
@@ -2404,7 +2521,9 @@ Note: The motivation for separating announcments from other behaviors in deliber
 
 ## Implicit (default) announcements ## {#implicit_announcements}
 
-By default, a conforming JIM viewer must generate an implicit announcement `name` for any element identified by a `dom` selector that has a valid `json` JSONPath selector that resolves to an endpoint (i.e., a `location` per the JSONPath specification), triggered as for the `enter` event.
+By default, a conforming JIM viewer must generate an implicit announcement `name` for any binding that has a valid `json` JSONPath selector that resolves to an endpoint (i.e., a `location` per the JSONPath specification) and identifies at least one graphical region through `dom` or `shapes`. The announcement is triggered as for the `enter` event.
+
+The implicit announcement is associated with the logical binding, regardless of whether its graphical regions are identified by DOM selectors, target shapes, or both.
 
 For each valid JSONPath endpoint that resolves to a key-value pair, the default announcement must be the text of the value.
 
@@ -2894,7 +3013,7 @@ second pair will collectively last for 250 milliseconds, with the intensity drop
 {
   "haptic": {
     "durations": [ 0, 200, 0, 200, 350, 150, 0, 100 ],
-    "intensities": [ 0, .5, 0, 1, 0, 1, 0, .3 ],
+    "intensities": [ 0, 0.5, 0, 1, 0, 1, 0, 0.3 ]
   }
 }
 </xmp>
@@ -3083,7 +3202,7 @@ Parts of it are implemented in browsers and other user agents, but some validati
 
 It is important to note that currently, SVG does not define a processing algorithm or behavior for metadata. A user agent `may` process the metadata in any manner it supports. Currently, no general purpose web browser processes the contents of the `metadata` element.
 
-Because the SVG `metadata` element does not have any defined attributes (such as an `href` attribute), there is no defined way to link to external resources; this contrasts with the `style` element in SVG, which can contain CSS rules as the child content of the element, or can reference external CSS files through the `href` attribute. Thus, this specification defines a linking syntax to allow external metadata files to be applied in whole or in part to the referring image document.
+SVG documents can include JIM directly in the `metadata` element. An external [JIM sidecar](#external_files) is primarily useful when metadata cannot conveniently be embedded in the graphic, particularly for raster images. JIM does not define a general-purpose mechanism for importing individual blocks of external JIM metadata.
 
 ## Cascading Style Sheets (CSS) ## {#css}
 
