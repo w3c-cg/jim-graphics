@@ -312,7 +312,7 @@ Labels, descriptions, and other unstructured metadata may optionally be included
 
 The notional dataset described in this specification includes exemplar entities which should be included in any inline dataset for optimal correlation to common graphical representation elements.
 
-These entities include the `title`, `subtitle`, `description`, `representation`, `facets`, `series`, `items`, `source`, and `href` keys and their values.
+These entities include the `title`, `subtitle`, `description`, `representation`, `facets`, `series`, `items`, `source`, and `externalData` keys and their values.
 
 <table class="data">
   <thead>
@@ -381,9 +381,9 @@ These entities include the `title`, `subtitle`, `description`, `representation`,
       <td>optional</td>
     </tr>
     <tr>
-      <td>`href`</td>
-      <td>array</td>
-      <td>An array of objects containing links to relevant resources, such as the dataset in another format, or an extended dataset</td>
+      <td>`externalData`</td>
+      <td>array of objects</td>
+      <td>References to external data resources, such as the complete underlying dataset or an alternative data format</td>
       <td>optional</td>
     </tr>
   </tbody>
@@ -407,8 +407,12 @@ An example of a `datasets` block (with elided values) for a structured data repr
     ],
     "source": {
     },
-    "href": {
-    }
+    "externalData": [
+      {
+        "url": "https://example.org/data/full.csv",
+        "type": "text/csv"
+      }
+    ]
   }
 ]
 </xmp>
@@ -1095,9 +1099,36 @@ A license object identifies the license that applies to a resource or contributi
   </tbody>
 </table>
 
-### The `href` key in a `datasets` block ### {#href_data_block}
+### The `externalData` key in a `datasets` block ### {#external_data_key}
 
-The `href` key in a `datasets` entry provides references to external data resources, such as a complete underlying dataset or the dataset in another format. These resource references are distinct from the external JIM metadata association described in [External JIM documents](#external_files).
+The `externalData` key in a `datasets` entry contains an array of objects referencing external data resources, such as a complete underlying dataset or the dataset in another format. Each object has the following keys:
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`url`</td>
+      <td>URI string</td>
+      <td>The location of the external data resource</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`type`</td>
+      <td>media type string</td>
+      <td>The media type of the external data resource</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+These resource references are distinct from the external JIM metadata association described in [External JIM documents](#external_files).
 
 The data used by JIM [bindings](#bindings) should be included inline, rather than requiring retrieval of an external dataset.
 
@@ -1366,7 +1397,7 @@ Note:  We might define specific formats for chart data, but this could be comple
 
 ### External data reference ### {#external_data_ref}
 
-For large datasets, producers should include the data necessary to represent and interact with the graphic directly in the JIM document, while providing a reference to the complete underlying dataset as an external resource through the dataset's [`href` key](#href_data_block).
+For large datasets, producers should include the data necessary to represent and interact with the graphic directly in the JIM document, while providing a reference to the complete underlying dataset as an external resource through the dataset's [`externalData` key](#external_data_key).
 
 The inline data may consist of a subset of the external dataset, aggregated values, derived values, or a combination of these. It should contain sufficient information to support the graphic's data bindings and intended interactions without requiring retrieval of the external dataset.
 
