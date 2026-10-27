@@ -11,7 +11,6 @@ Editor: Simon Varey, Fizz Studio https://fizz.studio, simon@fizz.studio
 Editor: Dan Gardner, ViewPlus Technologies https://www.viewplus.com, dan.gardner@viewplus.com
 Editor: Jeff Croxell, ViTAL Education https://vital.education, jeff.croxell@vital.education
 Abstract: A specification for expressing technical image metadata, with an emphasis on accessibility of data visualizations.
-Favicon: ./favicon.svg
 Complain About: accidental-2119 yes, missing-example-ids yes
 Markup Shorthands: markdown yes, markdown-blockquotes yes, css no
 </pre>
@@ -988,10 +987,113 @@ TODO: describe the `items` object
 
 #### The `source` key #### {#source_data_block}
 
-The provenance of the dataset.
+The `source` key defines an object citing where the dataset's data came from. It records the origin of the data, not the authorship of the graphic, which is recorded in the document's [provenance chain](#provenance_chain).
 
-TODO: describe the `source` object
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`producer`</td>
+      <td>non-empty string</td>
+      <td>The organization or person that produced the data</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`title`</td>
+      <td>non-empty string</td>
+      <td>The title of the source data product</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`url`</td>
+      <td>string</td>
+      <td>A URI of the main page describing the source data</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`citation`</td>
+      <td>non-empty string</td>
+      <td>A full citation of the source, following the producer's citation guidance where available</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`datePublished`</td>
+      <td>date string</td>
+      <td>When the source data was published, as an [[RFC3339]] `full-date`, or a year (`YYYY`) or year and month (`YYYY-MM`)</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`dateAccessed`</td>
+      <td>date string</td>
+      <td>When the data was retrieved from the source, as an [[RFC3339]] `full-date`</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`license`</td>
+      <td>object</td>
+      <td>The license of the source data, as a [license object](#license_object)</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
 
+
+<div id='xmp_dataset_source' class='example'>
+An example of a `source` object citing a government data product.
+
+<xmp highlight='json'>
+{
+  "source": {
+    "producer": "NOAA National Centers for Environmental Information",
+    "title": "Global Surface Temperature Anomalies",
+    "url": "https://www.ncei.noaa.gov/access/monitoring/global-temperature-anomalies",
+    "citation": "NOAA NCEI (2026). Global Surface Temperature Anomalies.",
+    "datePublished": "2026-03",
+    "dateAccessed": "2026-10-20",
+    "license": {
+      "name": "Public domain",
+      "url": "https://www.usa.gov/government-copyright"
+    }
+  }
+}
+</xmp>
+</div>
+
+#### License objects #### {#license_object}
+
+A license object identifies the license that applies to a resource or contribution. It is used by dataset [`source`](#source_data_block) and by [provenance activities](#provenance_chain).
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`name`</td>
+      <td>non-empty string</td>
+      <td>The name of the license; this may be an SPDX license identifier, such as `CC-BY-4.0`</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`url`</td>
+      <td>string</td>
+      <td>A URI of the license text, such as the location of a custom license</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
 
 ### The `href` key in a `datasets` block ### {#href_data_block}
 
@@ -1399,183 +1501,547 @@ Details on the syntax of an `sonification` block are defined in the [Sonificatio
 </div>
 
 
+## Provenance and Workflow ## {#document_provenance}
 
-## Provenance ## {#provenance}
+The `provenance` block records the origins, development, review, and publication of a graphic and its JIM metadata. It supports both documenting a graphic's history and managing workflows involving the graphic, its JIM metadata, and associated data.
 
-Provenance describes where a document came from. This includes entries such as authors, organizations, date and time created or modified, where it was first published, the title of the paper or article it supplemented, or the original work on which it was based.
+The `provenance` block may contain general `notes`, such as acknowledgments, sponsorships, and dedications, and a `chain` of activity records. Activities may create or modify content, or record evaluations, decisions, and other steps that do not change the content. Activity records may identify contributors, software, inputs, resulting documents, licensing terms, status, and other information about what occurred and why.
+
+Authoring tools, publishing platforms, and other systems can use these structured records to coordinate work, track progress, manage reviews and revisions, record decisions and approvals, and support handoffs between people, organizations, and software. In combination with annotations, activity records can also support workflows involving feedback, requested changes, and their resolution.
+
+The provenance record provides a lightweight, document-internal history that travels with the document. It need not be complete or independently verified. JIM does not prescribe particular workflows or provide authoritative version control, rights management, license validation, workflow enforcement, or verification of contributor identity. External systems may interpret these records, automate workflow operations, and impose additional requirements, but such requirements are outside the scope of JIM conformance.
+
+Note: Document provenance is distinct from the provenance of an individual dataset, which is specified in the `dataset` [`source` data block](#source_data_block).
 
 A `provenance` block is an object with the key `provenance`.
 
 <xmp highlight='json'>
 {
   "provenance": {
-    "notes": [
-      "item 1",
-      "item 2"
-    ]
-  }
-}
-</xmp>
-
-### Notes ### {#notes}
-
-The `notes` key defines an array where any details not covered by specific keys can be identified. This might include the name of the organization or individuals who sponsored the work, a dedications to a meaningful person in the author's life, and so on.
-
-Each item should be a quoted non-empty string separated by a comma.
-
-<xmp highlight='json'>
-{
-  "provenance": {
-    "notes": [
-      "item 1",
-      "item 2"
-    ]
-  }
-}  
-</xmp>
-
-### Provenance chain ### {#provenance_chain}
-
-The `chain` key defines an ordered array expressing the provenance chain of the document: the sequence of parties who authored, published, or adapted the work over time. It preserves credit to the original author or publisher as content is adapted and shared.
-
-Each item in the `chain` array is an object describing one authored state of the document, attributed to a single party. Items must be ordered chronologically, from the earliest state (the original author or publisher) to the most recent (the latest adapter). This array order is authoritative; the optional `date` key is descriptive and is not used to order the chain.
-
-Each item must include at least one of the `name` or `organization` keys. All other keys are optional.
-
-<table class="data">
-  <thead>
-    <tr>
-      <th>key</th>
-      <th>value type</th>
-      <th>description</th>
-      <th>requirement</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>`role`</td>
-      <td>token</td>
-      <td>The party's relationship to this authored state, such as `author`, `publisher`, or `adapter`</td>
-      <td>optional</td>
-    </tr>
-    <tr>
-      <td>`name`</td>
-      <td>non-empty string</td>
-      <td>The name of the person credited for this state</td>
-      <td>required if `organization` is absent</td>
-    </tr>
-    <tr>
-      <td>`organization`</td>
-      <td>non-empty string</td>
-      <td>The name of the organization credited for this state</td>
-      <td>required if `name` is absent</td>
-    </tr>
-    <tr>
-      <td>`title`</td>
-      <td>non-empty string</td>
-      <td>The title of the work at this authored state</td>
-      <td>optional</td>
-    </tr>
-    <tr>
-      <td>`href`</td>
-      <td>string</td>
-      <td>A URI locating the source document or work for this authored state</td>
-      <td>optional</td>
-    </tr>
-    <tr>
-      <td>`date`</td>
-      <td>date-time string</td>
-      <td>The date and time this state was created or modified, as an [[!RFC3339]] `date-time`</td>
-      <td>optional</td>
-    </tr>
-    <tr>
-      <td>`software`</td>
-      <td>object</td>
-      <td>The tool that produced this authored state, if any</td>
-      <td>optional</td>
-    </tr>
-  </tbody>
-</table>
-
-#### The `role` key #### {#provenance_role}
-
-The `role` key denotes the relationship of the party to the authored state it describes. When `role` is absent, the item's role is `author` if it is the first item in the `chain`, and `adapter` otherwise. An item should set `role` explicitly when this default does not apply — for example, when the origin of the work is a `publisher`, when a party is an `editor`, or when the origin has multiple co-authors.
-
-The value should be one of the following tokens:
-
-* `author`: the original creator of the work.
-* `publisher`: a party that published or distributed the work.
-* `adapter`: a party that adapted, remixed, or modified the work for a particular need.
-* `editor`: a party that revised the work without altering its essential content.
-* `contributor`: any other contributing party.
-
-Implementations may define additional `role` tokens for cases not covered by this list. Consumers that do not recognize a `role` token should treat the entry as a `contributor`.
-
-#### The `software` key #### {#provenance_software}
-
-The `software` key denotes an object identifying the tool that produced the authored state, such as a chart generator, an authoring application, or an automated service. The `software` object records the instrument used; the crediting party remains the `name` or `organization` of the containing item.
-
-The term `software` is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see [[#conform_imp]]).
-
-<table class="data">
-  <thead>
-    <tr>
-      <th>key</th>
-      <th>value type</th>
-      <th>description</th>
-      <th>requirement</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>`name`</td>
-      <td>non-empty string</td>
-      <td>The name of the tool</td>
-      <td>required</td>
-    </tr>
-    <tr>
-      <td>`version`</td>
-      <td>non-empty string</td>
-      <td>The version of the tool that produced this state</td>
-      <td>optional</td>
-    </tr>
-    <tr>
-      <td>`organization`</td>
-      <td>non-empty string</td>
-      <td>The vendor or organization that produces the tool</td>
-      <td>optional</td>
-    </tr>
-  </tbody>
-</table>
-
-<xmp highlight='json'>
-{
-  "provenance": {
+    "notes": {
+      "Sponsor": "Produced with support from Example Foundation",
+      "Dedication": "Dedicated to Jane Smith"
+    },
     "chain": [
       {
-        "name": "Jamie Rivera",
-        "date": "2026-08-24T14:30:00Z",
-        "software": {
-          "name": "ParaCharts",
-          "version": "2.3.1",
-          "organization": "Fizz Studio"
-        }
-      },
-      {
-        "role": "adapter",
-        "name": "Alex Chen",
-        "title": "Quarterly Sales (tactile edition)",
-        "href": "https://example.org/works/q-sales-tactile.svg",
-        "date": "2026-08-25T09:00:00Z"
+        "action": "created",
+        "scope": ["graphic"],
+        "label": "Original graphic",
+        "contributors": [
+          { "name": "Jamie Rivera" }
+        ]
       }
     ]
   }
 }
 </xmp>
 
-Note: In the example above, the first item omits `role` and defaults to `author`; the second sets `role` to `adapter` explicitly. Set `role` to record other relationships, such as `"role": "publisher"`.
+### Notes ### {#provenance_notes}
 
-Note: Identifiers meaningful only within a single platform, such as internal database keys, should be carried in the `extensions` block rather than in `chain`, so the provenance chain remains portable between implementations.
+The document-level `notes` key defines an object containing general information about the document or its provenance that is not necessarily associated with an individual activity. Each key is a human-readable label, and each value may be any valid JSON value, including nested objects and arrays.
+
+For example, notes may acknowledge sponsors, credit supporting organizations, or record a dedication.
+
+Notes are informational. Consumers may present notes in an implementation-defined manner. JIM defines no vocabulary for note keys and requires no other processing.
+
+Activities in the [provenance chain](#provenance_chain) may also have `notes`, with the same form and treatment, for information about an individual activity.
+
+### Provenance chain ### {#provenance_chain}
+
+The `chain` key defines an array of records describing activities associated with the creation, modification, adaptation, annotation, review, or publication of the graphic and its JIM metadata. Each record describes one activity, including optional information about its inputs, contributors, purpose, licensing terms, and resulting document.
+
+Each item in the `chain` array is an activity object. Items are ordered chronologically, from earliest to latest recorded activity. When `date` is present on two or more items, the dates must not decrease in array order; validators and consumers should warn when they do. Array order does not establish derivation between artifacts: the `inputs` of each activity identify the materials used for that activity.
+
+Authoring tools that modify a document should preserve its existing chain and append new activities. A producer may nonetheless omit or consolidate activities, for example to remove internal process steps before publication.
+
+Each activity must contain an `action` key. All other keys are optional.
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`id`</td>
+      <td>non-empty string</td>
+      <td>An identifier for the activity, unique within the document, so that it can be referenced by inputs or other metadata within that document</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`action`</td>
+      <td>non-empty string</td>
+      <td>The kind of activity performed; see [Common activity actions](#provenance_actions)</td>
+      <td>required</td>
+    </tr>
+    <tr>
+      <td>`scope`</td>
+      <td>array of non-empty strings</td>
+      <td>The kinds of content concerned by the activity</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`label`</td>
+      <td>non-empty string</td>
+      <td>A brief human-readable label for the activity, such as "Added haptics" or "Translated to Mandarin"</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`description`</td>
+      <td>string</td>
+      <td>A human-readable explanation of the activity, including its purpose, rationale, or effects</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`date`</td>
+      <td>date-time string</td>
+      <td>When the activity took place, as an [[!RFC3339]] `date-time`</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`version`</td>
+      <td>non-empty string</td>
+      <td>A version label assigned to the document resulting from the activity</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`contributors`</td>
+      <td>array of agent references</td>
+      <td>People or organizations associated with the activity</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`inputs`</td>
+      <td>array of objects</td>
+      <td>Documents or other resources used as inputs to the activity</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`url`</td>
+      <td>string</td>
+      <td>A URI identifying the canonical location of the document resulting from the activity</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`license`</td>
+      <td>object</td>
+      <td>The license associated with the material contributed through the activity, as a [license object](#license_object)</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`status`</td>
+      <td>string</td>
+      <td>Free-form status information recorded for the activity or its result</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`notes`</td>
+      <td>object</td>
+      <td>Labeled notes about the activity, in the same form as document-level [notes](#provenance_notes)</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`software`</td>
+      <td>array of agent references</td>
+      <td>Software used to perform the activity, if any</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Activity details #### {#provenance_activity}
+
+The `action` value identifies the activity performed. Common values are defined in [Common activity actions](#provenance_actions). JIM does not impose processing behavior based on action values.
+
+The `label` and `description` keys describe the activity, not the title or subject matter of the graphic. A `description` may explain why an activity was undertaken as well as what changed.
+
+The `version` key is a human-readable label, not a unique identifier. Different branches of a document's history may use the same version label.
+
+The `url` key, when present, identifies the canonical location of the document resulting from the activity. Neither `version` nor `url` establishes a managed version-control system.
+
+The `license` key records the license associated with the contribution made through the activity. It does not change licensing terms for pre-existing input materials, and its presence does not imply that JIM evaluates license compatibility or enforces licenses.
+
+The `status` key is a free-form string. The `notes` key has the same form and treatment as document-level [notes](#provenance_notes). JIM defines no vocabulary for `status` values or note keys, and requires no processing for either key. An external system may apply additional conventions or constraints.
+
+#### Activity scope #### {#provenance_scope}
+
+The optional `scope` key defines an array of strings identifying the broad kinds of content to which an activity relates. An activity may concern more than one kind of content.
+
+The following values are defined:
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>value</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`graphic`</td>
+      <td>The graphical representation, including its visual or other rendered presentation</td>
+    </tr>
+    <tr>
+      <td>`jim`</td>
+      <td>The JIM metadata associated with the graphic, including descriptions, behaviors, and annotations</td>
+    </tr>
+    <tr>
+      <td>`data`</td>
+      <td>The data associated with the graphic</td>
+    </tr>
+  </tbody>
+</table>
+
+Other non-empty strings are permitted.
+
+The `scope` key provides a broad classification of an activity. It does not identify a particular graphic element, annotation, file, or dataset.
+
+An activity may concern content without modifying it. For example, a review might have a `scope` of `["graphic", "jim"]`. The `scope` key provides a general classification; `inputs` separately identifies specific resources used by the activity.
+
+Activity scope does not replace dataset `source` citations.
+
+#### Common activity actions #### {#provenance_actions}
+
+The following action values are defined for common activities. Producers should use these values when applicable, but may use other non-empty strings. An unrecognized action value does not make an activity invalid and does not require special processing by consumers.
+
+The vocabulary is informed in part by the <a href="https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html">C2PA actions vocabulary</a> [[C2PA]], which defines standardized actions associated with media provenance. JIM uses unprefixed values and also defines actions for JIM-specific and editorial activities. This does not imply C2PA conformance or require C2PA processing.
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>action</th>
+      <th>description</th>
+      <th>C2PA counterpart</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`created`</td>
+      <td>Created a new graphic, JIM representation, or other resource</td>
+      <td>`c2pa.created`</td>
+    </tr>
+    <tr>
+      <td>`edited`</td>
+      <td>Revised or corrected existing material</td>
+      <td>`c2pa.edited`</td>
+    </tr>
+    <tr>
+      <td>`adapted`</td>
+      <td>Adapted material for another purpose, audience, modality, or environment</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`translated`</td>
+      <td>Translated linguistic content into another language or language variety</td>
+      <td>`c2pa.translated`</td>
+    </tr>
+    <tr>
+      <td>`described`</td>
+      <td>Added or revised descriptive or semantic information</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`annotated`</td>
+      <td>Added or revised annotations</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`reviewed`</td>
+      <td>Examined material and recorded findings or feedback</td>
+      <td>`c2pa.reviewed`</td>
+    </tr>
+    <tr>
+      <td>`validated`</td>
+      <td>Checked material against criteria, requirements, or tests</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`changesRequested`</td>
+      <td>Requested changes to material</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`approved`</td>
+      <td>Recorded an approval or sign-off</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`merged`</td>
+      <td>Combined material from multiple inputs</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`published`</td>
+      <td>Made material available for distribution or use</td>
+      <td>`c2pa.published`</td>
+    </tr>
+  </tbody>
+</table>
+
+The distinction between `described` and `annotated` is intentional. Descriptions convey information about the graphic, while annotations associate additional information, such as review comments, with a resource or part of it. A single activity may involve both.
+
+Activities such as `reviewed`, `validated`, and `approved` record that an evaluation or decision occurred. These actions do not imply that JIM independently verifies the findings or enforces the resulting decision.
+
+#### The `contributors` key #### {#provenance_contributors}
+
+The `contributors` key defines an array of agent references identifying people or organizations involved in the activity. An activity may have multiple contributors. Each item in the `contributors` array is an [agent reference](#agent_reference).
+
+#### Agent references #### {#agent_reference}
+
+An agent reference identifies or describes a person, organization, software system, or other agent. People, organizations, and software use the same structure.
+
+An agent reference is either a URI string or an object. A URI string is shorthand for an object containing only `id`. A string used as an agent reference is always interpreted as an identifier, never as a name; a name is given with the `name` key.
+
+An agent reference object must contain at least one of the `id`, `orcid`, `name`, `nickname`, or `emails` keys, and must not contain keys other than those below.
+
+<table class="data">
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value type</th>
+      <th>description</th>
+      <th>requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`id`</td>
+      <td>string</td>
+      <td>A URI identifying the agent; a stable absolute URI should be used when one is available</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`orcid`</td>
+      <td>string</td>
+      <td>An ORCID iD identifying a person; must not be used for organizations, software, or other non-person agents</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`name`</td>
+      <td>non-empty string</td>
+      <td>The agent's name</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`nickname`</td>
+      <td>non-empty string</td>
+      <td>An informal or alternative name by which the agent is known</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`title`</td>
+      <td>non-empty string</td>
+      <td>A general professional, organizational, or descriptive title for the agent</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`version`</td>
+      <td>string or object</td>
+      <td>The version of software used: either a version string, or an object with the same form and treatment as [notes](#provenance_notes), such as one recording a model name, release, and quality setting for an AI system</td>
+      <td>optional for software agents (those in an activity's `software` key); must not be used for other agents</td>
+    </tr>
+    <tr>
+      <td>`emails`</td>
+      <td>array of email references</td>
+      <td>One or more email addresses associated with the agent</td>
+      <td>optional</td>
+    </tr>
+    <tr>
+      <td>`affiliations`</td>
+      <td>array of affiliation objects</td>
+      <td>The agent's relationships to organizations</td>
+      <td>optional</td>
+    </tr>
+  </tbody>
+</table>
+
+When `id` is present, it identifies the agent for machine processing. Two agent references with the same `id` identify the same agent. Consumers must not assume that two agent references identify the same agent merely because they share a name, nickname, title, email address, or affiliation.
+
+An agent reference describes the agent, not the agent's part in an activity. The activity's `action`, and the key in which the agent reference appears, determine that.
+
+An **email reference** is an object containing at least one of the `email` or `hash` keys. The `email` key, when present, contains an email address. The `hash` key, when present, contains the lowercase hexadecimal SHA-1 digest of the corresponding `mailto:` URI. Either key may be used without the other. The `hash` key provides compatibility with the Web Annotation Data Model; it is not a privacy or security mechanism.
+
+An **affiliation object** is an object with a required `organization` key, whose value is an organization reference, and optional `title` and `emails` keys giving the agent's title and email references within that organization. The order of affiliations has no meaning.
+
+An **organization reference** is either a string, which is the organization's name, or an object containing at least one of an `id` key, whose value is a URI identifying the organization, and a `name` key.
+
+<div id='xmp_agent_reference' class='example'>
+An agent reference for a person with an ORCID iD and one affiliation, and an agent reference for an organization.
+
+<xmp highlight='json'>
+[
+  {
+    "orcid": "0000-0002-1825-0097",
+    "name": "Alex Chen",
+    "affiliations": [
+      {
+        "organization": "Accessibility Lab",
+        "title": "Accessibility specialist"
+      }
+    ]
+  },
+  {
+    "id": "https://example.org/",
+    "name": "Example Publishing"
+  }
+]
+</xmp>
+</div>
+
+Note: Provenance records can identify individual people by name, email address, or identifier, and that information travels with the document wherever it is shared. Producers are encouraged to obtain consent before identifying individuals and to omit email addresses from documents intended for public distribution; crediting an organization alone, as its own agent reference, is also an option. See also [[#privacy]].
+
+#### The `inputs` key #### {#provenance_inputs}
+
+The `inputs` key defines an array of objects referencing documents or other resources used by the activity. Each input object must contain either a `url` key, whose value is a URI identifying the input resource, or an `activity` key, whose value is the `id` of an earlier activity in the chain whose result was used.
+
+An activity may have multiple inputs, for example when combining two adaptations or when using a graphic and a separate JIM file. Multiple activities may also reference the same input. These references allow a document's history to express branching or merging without requiring version labels to be globally unique.
+
+Input references are informational. JIM does not require the resources to be available or require consumers to retrieve them.
+
+#### The `software` key #### {#provenance_software}
+
+The `software` key defines an array of [agent references](#agent_reference) identifying software used to perform the activity, such as a chart generator, authoring application, automated service, or AI system. An activity may use more than one piece of software. Software is listed separately from `contributors`, so that the people and organizations credited for an activity are distinct from the tools they used.
+
+The term `software` is used in preference to "generator", which this specification uses to mean a conforming JIM-producing implementation (see [[#conform_imp]]).
+
+A software agent reference may contain a `version`. The vendor or organization that produces the software, if recorded, is given as an affiliation.
+
+<div id='xmp_provenance_software' class='example'>
+Two pieces of software used in one activity: an authoring application with a simple version string, and an AI system whose version is described with labeled values.
+
+<xmp highlight='json'>
+"software": [
+  {
+    "name": "Inkscape",
+    "version": "1.4",
+    "affiliations": [ { "organization": "Inkscape Project" } ]
+  },
+  {
+    "name": "Example Assistant",
+    "version": {
+      "Model": "example-model-3",
+      "Release": "2026-06",
+      "Quality": "high"
+    },
+    "affiliations": [ { "organization": "Example AI, Inc." } ]
+  }
+]
+</xmp>
+</div>
+
+<div id='xmp_provenance_activities' class='example'>
+This example records the creation of a graphic, the addition of JIM metadata, and an accessibility review. The graphic and its JIM metadata can have different contributors and licensing terms. The review records a status and supporting notes, without prescribing what a publisher has to do with them.
+
+<xmp highlight='json'>
+{
+  "provenance": {
+    "notes": {
+      "Sponsor": "Example Foundation"
+    },
+    "chain": [
+      {
+        "action": "created",
+        "scope": ["graphic"],
+        "label": "Original chart",
+        "date": "2026-08-24T14:30:00Z",
+        "version": "1.0.0",
+        "contributors": [
+          {
+            "name": "Jamie Rivera",
+            "affiliations": [
+              { "organization": "Example Publishing" }
+            ]
+          }
+        ],
+        "software": [
+          {
+            "name": "PopCharts",
+            "version": "2.3.1",
+            "affiliations": [ { "organization": "Exemplar Software, LLC" } ]
+          }
+        ],
+        "url": "https://example.org/charts/sales-v1.svg",
+        "license": {
+          "name": "CC-BY-4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/"
+        }
+      },
+      {
+        "id": "add-descriptions",
+        "action": "described",
+        "scope": ["jim"],
+        "label": "Added accessible descriptions",
+        "description": "Added structured descriptions and navigation metadata for screen-reader users.",
+        "date": "2026-08-25T09:00:00Z",
+        "version": "1.1.0",
+        "contributors": [
+          {
+            "name": "Alex Chen",
+            "affiliations": [
+              {
+                "organization": "Accessibility Lab",
+                "emails": [ { "email": "alex@example.org" } ]
+              }
+            ]
+          }
+        ],
+        "inputs": [
+          { "url": "https://example.org/charts/sales-v1.svg" }
+        ],
+        "url": "https://example.org/charts/sales-v1.1.jim.json",
+        "license": {
+          "name": "Accessibility Lab Open Metadata License",
+          "url": "https://example.org/licenses/open-metadata"
+        }
+      },
+      {
+        "action": "reviewed",
+        "scope": ["graphic", "jim"],
+        "label": "Accessibility review",
+        "description": "Reviewed the descriptions and keyboard navigation before publication.",
+        "date": "2026-08-26T11:30:00Z",
+        "contributors": [
+          {
+            "name": "Morgan Lee",
+            "affiliations": [
+              { "organization": "Example Publishing" }
+            ]
+          }
+        ],
+        "inputs": [
+          { "activity": "add-descriptions" }
+        ],
+        "status": "approved with exceptions",
+        "notes": {
+          "Ticket": "A11Y-247",
+          "Remaining issue": "Tactile adaptation requires additional review"
+        }
+      }
+    ]
+  }
+}
+</xmp>
+</div>
+
+### Importing and consolidating provenance #### {#provenance_import}
+
+When a graphic or other resource is incorporated into a JIM document, it may already have provenance information expressed in another format or maintained by an external system. For example, an SVG diagram obtained from Wikimedia Commons may have an existing history of authorship, modifications, attribution, and licensing.
+
+Producers should preserve and re-express available provenance information using the corresponding JIM structures, including activity records, contributors, inputs, licensing terms, and notes. This allows credits and provenance from multiple sources to be consolidated into a common representation that travels with the resulting document.
+
+Imported provenance should distinguish original contributions from subsequent adaptations and additions of JIM metadata. For example, activities from the imported history can have a `scope` of `["graphic"]` and a `url` identifying the source resource, while activities that add JIM metadata have a `scope` of `["jim"]` and identify the imported material in their `inputs`. Producers may summarize or consolidate historical activities when individual records are unavailable or impractical to reproduce, but should preserve known attribution and licensing information. Re-expressing provenance in JIM does not change the licensing obligations associated with the original material or imply independent verification of the imported information.
+
+### Review and workflow activities ### {#provenance_workflow}
+
+The provenance chain is not limited to activities that create or modify graphic content. It can also record editorial reviews, accessibility evaluations, requests for changes, responses to feedback, approvals, and other steps in a publishing workflow. An activity may record what happened, who was involved, its rationale, and an informal `status`, without defining what a publisher is required to do next.
+
+This is especially useful in combination with native JIM annotations, which are planned for a forthcoming version of this specification. Annotations will provide a way to associate review comments, suggested changes, and related feedback with a graphic or its constituent elements. The annotations can contain the comments themselves, while provenance entries can record activities such as adding annotations, reviewing the document, addressing feedback, or approving a revision. Native annotation support is not defined in this section.
+
+JIM does not require particular review activities or status values, or determine whether an approval is valid or feedback has been resolved.
 
 ## Tags ## {#tags}
 
@@ -2687,6 +3153,10 @@ By defining a set of declarative syntaxes for different assistive technologies, 
 
 By enabling security through declarative behaviors, this specification ensures the privacy of the user from third parties. Note that data collection might still be performed through some primary user agents and content providers, but this should be done only with the user's consent.
 
+Document provenance can identify the people who created or adapted a document; see [[#agent_reference]] for guidance on consent and on omitting personal contact information.
+
+Provenance activity `contributors` can identify individual people, and those details travel with the document wherever it is shared. Authors should obtain consent before including identifying or contact information, or credit an `organization` aas the contributor instead.
+
 ## Portability ## {#portability}
 
 Data visualizations can often lose their association with their context, including the article they were published in or the data they represent. This specification must define a way to include the raw data and the provenance in the image file, so the context can be preserved as the document is shared through various means.
@@ -2794,6 +3264,15 @@ The software that processes and presents the document to the end user.
       "https://mailarchive.ietf.org/arch/browse/jsonpath/"
     ],
     "biblio-type": "normative"
+  },
+  "c2pa": {
+    "authors": [
+      "Coalition for Content Provenance and Authenticity"
+    ],
+    "href": "https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html",
+    "title": "C2PA Technical Specification, Version 2.5",
+    "publisher": "C2PA",
+    "biblio-type": "informative"
   }
 }
 </pre>
